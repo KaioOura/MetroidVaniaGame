@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e9a2daf839fffa438d62d7efe7aaa34, type: 3}
+  m_Name: Sword3AttackData
+  m_EditorClassIdentifier: 
+  _animationClip: {fileID: 7400000, guid: 3a70d21fe1870cc4f9a06330cebe7bb9, type: 2}
+  _transitionDuration: 0
+  _comboConnectionRange: {x: 30, y: 30}
+  _attackMovementRelated:
+    _characterStateToSet: 3
+    _stopHorizontalVelocity: 1
+    _stopVerticalVelocity: 0
+    _attackForces: []
+  _upgradeNeeded: 2
