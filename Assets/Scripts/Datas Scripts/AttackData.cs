@@ -15,6 +15,9 @@ public class AttackData : ScriptableObject
 
     [SerializeField] private UpgradeEnum _upgradeNeeded;
 
+    [SerializeField] List<FrameActionForces> _frameActionForces = new List<FrameActionForces>();
+    [SerializeField] List<FrameActionVFX> _frameActionVFXs = new List<FrameActionVFX>();
+
 
     public AnimationClip AnimationClip => _animationClip;
     public float TransitionDuration => _transitionDuration;
@@ -24,6 +27,9 @@ public class AttackData : ScriptableObject
     public AttackMovementRelated AttackMovementRelated => _attackMovementRelated;
 
     public UpgradeEnum UpgradeNeeded => _upgradeNeeded;
+
+    public List<FrameActionForces> FrameActionForces => _frameActionForces;
+    public List<FrameActionVFX> FrameActionsVFXs => _frameActionVFXs;
 }
 
 [Serializable]
@@ -32,20 +38,32 @@ public class AttackMovementRelated
     [SerializeField] private CharState _characterStateToSet;
     [SerializeField] private bool _stopHorizontalVelocity;
     [SerializeField] private bool _stopVerticalVelocity;
-    [SerializeField] private AttackForces[] _attackForces;
 
     public CharState CharacterStateToSet => _characterStateToSet;
     public bool StopHorizontalVelocity => _stopHorizontalVelocity;
     public bool StopVerticalVelocity => _stopVerticalVelocity;
-    public AttackForces[] AttackForces => _attackForces;
 }
 
 [Serializable]
-public class AttackForces
+public class FrameActionVFX : FrameAction
 {
+    [SerializeField]
     private float _force;
-    private float _timeApplied;
 
     public float Force => _force;
-    public float TimeApplied => _timeApplied;
+}
+
+[Serializable]
+public class FrameActionForces : FrameAction
+{
+    [SerializeField]
+    private Vector2 _force;
+
+    public Vector2 Force => _force;
+
+}
+
+public class FrameAction
+{
+    public Vector2 ActionInterval;
 }

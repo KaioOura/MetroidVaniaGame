@@ -19,5 +19,6 @@ MonoBehaviour:
     _characterStateToSet: 3
     _stopHorizontalVelocity: 1
     _stopVerticalVelocity: 1
-    _attackForces: []
   _upgradeNeeded: 0
+  _frameActionForces: []
+  _frameActionVFXs: []

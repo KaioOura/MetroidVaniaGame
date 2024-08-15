@@ -17,7 +17,10 @@ MonoBehaviour:
   _comboConnectionRange: {x: 27, y: 38}
   _attackMovementRelated:
     _characterStateToSet: 4
-    _stopHorizontalVelocity: 0
+    _stopHorizontalVelocity: 1
     _stopVerticalVelocity: 0
-    _attackForces: []
   _upgradeNeeded: 3
+  _frameActionForces:
+  - ActionInterval: {x: 0, y: 19}
+    _force: {x: 0, y: 0.1}
+  _frameActionVFXs: []

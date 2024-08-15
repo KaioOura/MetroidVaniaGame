@@ -7,6 +7,7 @@ public class Combat : MonoBehaviour
 {
     [SerializeField] private WeaponData _currentWeapon;
     [SerializeField] private FootCollider _footCollider;
+    [SerializeField] private FrameActionManager _frameActionManager;
 
     private AnimatorRef _animatorRef;
     private UpgradeManager _upgradeManager;
@@ -94,11 +95,11 @@ public class Combat : MonoBehaviour
 
         _attackIndex = _attackIndex >= _currentAttackDataList.Length - 1 ? 0 : _attackIndex + 1;
 
+        _frameActionManager.StopAllCoroutines();
         RequestAttackAction(attackData);
 
         if (FrameCounter != null)
             StopCoroutine(FrameCounter);
-
         FrameCounter = CountFramesRoutine(attackData, AnimatorRef.AttackState, attackData.TransitionDuration);
         StartCoroutine(FrameCounter);
     }
@@ -126,6 +127,7 @@ public class Combat : MonoBehaviour
                 //float normalizedTime = 1 - _animatorRef.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
                 //timeTrasitioning += Time.deltaTime;
                 CurrentFrame = frame = (int)(normalizedTransitionTime / (1 / (transitionDurantion * attackData.AnimationClip.frameRate)) + 1);
+                _frameActionManager.ReceiveFrame(CurrentFrame);
                 //Debug.Log(frame);
                 yield return null;
             }
@@ -139,11 +141,13 @@ public class Combat : MonoBehaviour
             float normalizedTime = _animatorRef.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
             //Debug.Log("Normalized: " +  normalizedTime);
             CurrentFrame = frame = (int)(normalizedTime / (1 / maxFrame) + 1);
+            _frameActionManager.ReceiveFrame(CurrentFrame);
             //Debug.Log(frame);
             yield return null;
         }
 
-
+        _frameActionManager.StopAllCoroutines();
+        _frameActionManager.ReceiveFrame(0);
         _isAttacking = false;
         _attackIndex = 0;
         _currentAttackData = null;
@@ -154,6 +158,7 @@ public class Combat : MonoBehaviour
         OnRequestStateChanging?.Invoke(attackData.AttackMovementRelated.CharacterStateToSet);
 
         OnRequestStopVelocity?.Invoke(attackData.AttackMovementRelated.StopHorizontalVelocity, attackData.AttackMovementRelated.StopVerticalVelocity);
+        _frameActionManager.FrameActions(attackData);
         //TO DO External Forces
     }
 }
