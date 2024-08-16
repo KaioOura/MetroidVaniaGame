@@ -25,7 +25,7 @@ public class FrameActionManager : MonoBehaviour
     }
 
     public event Action<int> OnFrameUpdate;
-    public event Action<Vector2> OnApplyForce;
+    public event Action<Vector2, bool> OnApplyForce;
 
 
     public void Init(AnimatorRef animatorRef)
@@ -33,21 +33,21 @@ public class FrameActionManager : MonoBehaviour
         _animatorRef = animatorRef;
     }
 
-    public void OnActionReceived(AttackData attackData, Action EndAttack)
+    public void OnActionReceived(ActionData ActionData, Action EndAttack)
     {
-        _animatorRef.AnimatorOverrideController[AnimatorRef.AttackState] = attackData.AnimationClip;
-        _animatorRef.Animator.CrossFadeInFixedTime(AnimatorRef.AttackState, attackData.TransitionDuration);
+        _animatorRef.AnimatorOverrideController[AnimatorRef.AttackState] = ActionData.AnimationClip;
+        _animatorRef.Animator.CrossFadeInFixedTime(AnimatorRef.AttackState, ActionData.TransitionDuration);
 
         StopAllCoroutines();
-        FrameActions(attackData);
+        FrameActions(ActionData);
 
         if (FrameCounter != null)
             StopCoroutine(FrameCounter);
-        FrameCounter = CountFramesRoutine(attackData, AnimatorRef.AttackState, attackData.TransitionDuration, EndAttack);
+        FrameCounter = CountFramesRoutine(ActionData, AnimatorRef.AttackState, ActionData.TransitionDuration, EndAttack);
         StartCoroutine(FrameCounter);
     }
 
-    IEnumerator CountFramesRoutine(AttackData attackData, string desiredAnimationState, float transitionDurantion, Action EndAttack)
+    IEnumerator CountFramesRoutine(ActionData attackData, string desiredAnimationState, float transitionDurantion, Action EndAttack)
     {
         float maxFrame = attackData.AnimationClip.length * attackData.AnimationClip.frameRate;
         int frame = 0;
@@ -81,22 +81,22 @@ public class FrameActionManager : MonoBehaviour
         EndAttack?.Invoke();
     }
 
-    public void FrameActions(AttackData attackData)
+    public void FrameActions(ActionData ActionData)
     {
-        if (attackData.FrameActionForces.Count > 0)
+        if (ActionData.FrameActionForces.Count > 0)
         {
-            foreach (var action in attackData.FrameActionForces)
+            foreach (var action in ActionData.FrameActionForces)
             {
-                IEnumerator routine = FrameActionRoutine(action.ActionInterval, () => OnApplyForce?.Invoke(action.Force));
+                IEnumerator routine = FrameActionRoutine(action.ActionInterval, () => OnApplyForce?.Invoke(action.Force, action.LocalForce));
                 Debug.Log(action.ActionInterval);
                 StartCoroutine(routine);
             }
 
         }
 
-        if (attackData.FrameActionsVFXs.Count > 0)
+        if (ActionData.FrameActionsVFXs.Count > 0)
         {
-            foreach (var action in attackData.FrameActionsVFXs)
+            foreach (var action in ActionData.FrameActionsVFXs)
             {
                 //IEnumerator routine = FrameActionRoutine(action.ActionInterval, () => OnApplyForce(action.Force));
                 //StartCoroutine(routine);

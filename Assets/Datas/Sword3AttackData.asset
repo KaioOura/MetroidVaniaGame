@@ -15,9 +15,14 @@ MonoBehaviour:
   _animationClip: {fileID: 7400000, guid: 3a70d21fe1870cc4f9a06330cebe7bb9, type: 2}
   _transitionDuration: 0
   _comboConnectionRange: {x: 30, y: 30}
-  _attackMovementRelated:
+  _actionMovementRelated:
     _characterStateToSet: 3
     _stopHorizontalVelocity: 1
     _stopVerticalVelocity: 0
-    _attackForces: []
   _upgradeNeeded: 2
+  _frameActionForces:
+  - ActionInterval: {x: 2, y: 2}
+    _localForce: 1
+    _force: {x: 0.7, y: 0}
+  _frameActionVFXs: []
+  _damage: 0

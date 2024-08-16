@@ -47,8 +47,6 @@ public class Movement : MonoBehaviour
     public void OnMoveInput(Vector2 input)
     {
         Move = input;
-
-        //Debug.Log(Move);
     }
 
     void CalcMovement()
@@ -149,8 +147,12 @@ public class Movement : MonoBehaviour
 
     }
 
-    public void ApplyForce(Vector2 force)
+    public void ApplyForce(Vector2 force, bool IsLocal)
     {
-        _rb.AddForce(force, ForceMode2D.Impulse);
+        bool facingRight = _animatorRef.MainTransform.eulerAngles.y == 0;
+        int i = IsLocal == true ? facingRight == true ? 1 : -1 : 1; //Need to refactor
+
+
+        _rb.AddForce(force * i, ForceMode2D.Impulse);
     }
 }

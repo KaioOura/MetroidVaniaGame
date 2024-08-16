@@ -77,8 +77,8 @@ public class Combat : MonoBehaviour
     {
         _attackIndex = _attackIndex >= _currentAttackDataList.Length - 1 ? 0 : _attackIndex + 1;
 
-        OnRequestStateChanging?.Invoke(attackData.AttackMovementRelated.CharacterStateToSet);
-        OnRequestStopVelocity?.Invoke(attackData.AttackMovementRelated.StopHorizontalVelocity, attackData.AttackMovementRelated.StopVerticalVelocity);
+        OnRequestStateChanging?.Invoke(attackData.ActionMovementRelated.CharacterStateToSet);
+        OnRequestStopVelocity?.Invoke(attackData.ActionMovementRelated.StopHorizontalVelocity, attackData.ActionMovementRelated.StopVerticalVelocity);
 
         _isAttacking = true;
         _currentAttackData = attackData;
