@@ -8,7 +8,6 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] private MovementData _movementData;
     [SerializeField] private UpgradeManager _upgradeManager;
-    [SerializeField] private FrameActionManager _frameActionManager;
     [SerializeField] private Rigidbody2D _rb;
     [SerializeField] private FootCollider _footCollider;
 
@@ -39,17 +38,10 @@ public class Movement : MonoBehaviour
         HandleFalling();
     }
 
-    void OnDestroy()
-    {
-        //_frameActionManager.OnApplyForce -= ApplyForce;
-    }
-
     public void Init(AnimatorRef animatorRef, CharacterState currentState)
     {
         _animatorRef = animatorRef;
         _currentState = currentState;
-
-        _frameActionManager.OnApplyForce += ApplyForce;
     }
 
     public void OnMoveInput(Vector2 input)
@@ -146,11 +138,6 @@ public class Movement : MonoBehaviour
     {
         return _currentState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.AirAttack;
     }
-
-    // public void ChangeCurrentMoveType(MovementTypes newMovementType)
-    // {
-    //     _currentMoveType = newMovementType;
-    // }
 
     public void OnStopVelocity(bool isHorizontal, bool isVertical)
     {

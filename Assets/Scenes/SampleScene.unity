@@ -260,7 +260,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movementData: {fileID: 11400000, guid: ef0f13927779bc74c8c844c2d5040acc, type: 2}
   _upgradeManager: {fileID: 425532391}
-  _frameActionManager: {fileID: 847965562}
   _rb: {fileID: 1225023785}
   _footCollider: {fileID: 95129239}
 --- !u!1 &383017234
@@ -602,7 +601,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64ac7f10faea90447a8dd455eab4bbe8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myFrame: 0
 --- !u!4 &847965563
 Transform:
   m_ObjectHideFlags: 0
@@ -895,6 +893,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movement: {fileID: 311081535}
   _combat: {fileID: 625791675}
+  _frameActionManager: {fileID: 847965562}
   _inputReader: {fileID: 1225023783}
   _animatorRef: {fileID: 1059713932}
   _upgradeManager: {fileID: 425532391}

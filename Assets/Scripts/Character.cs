@@ -7,6 +7,7 @@ public class Character : MonoBehaviour
 {
     [SerializeField] private Movement _movement;
     [SerializeField] private Combat _combat;
+    [SerializeField] private FrameActionManager _frameActionManager;
     [SerializeField] private InputReader _inputReader;
     [SerializeField] private AnimatorRef _animatorRef;
     [SerializeField] private UpgradeManager _upgradeManager;
@@ -24,6 +25,7 @@ public class Character : MonoBehaviour
         InitInput();
         InitMovement();
         InitCombat();
+        InitFrameActionManager();
     }
 
     // Update is called once per frame
@@ -40,8 +42,13 @@ public class Character : MonoBehaviour
 
         _combat.OnRequestStateChanging -= ChangeCurrentState;
         _combat.OnRequestStopVelocity -= _movement.OnStopVelocity;
+        _combat.OnAttackPerformed -= _frameActionManager.OnActionReceived;
 
         _movement.OnChangeStateChanging -= ChangeCurrentState;
+
+
+        _frameActionManager.OnFrameUpdate -= _combat.UpdateCurrentFrame;
+        _frameActionManager.OnApplyForce -= _movement.ApplyForce;
     }
 
     void InitInput()
@@ -59,10 +66,20 @@ public class Character : MonoBehaviour
 
     void InitCombat()
     {
-        _combat.Init(_animatorRef, _upgradeManager);
+        _combat.Init(_upgradeManager);
 
         _combat.OnRequestStateChanging += ChangeCurrentState;
         _combat.OnRequestStopVelocity += _movement.OnStopVelocity;
+        _combat.OnAttackPerformed += _frameActionManager.OnActionReceived;
+    }
+
+    void InitFrameActionManager()
+    {
+        _frameActionManager.Init(_animatorRef);
+
+        _frameActionManager.OnApplyForce += _movement.ApplyForce;
+
+        _frameActionManager.OnFrameUpdate += _combat.UpdateCurrentFrame;
     }
 
     public void ChangeCurrentState(CharState characterState)
