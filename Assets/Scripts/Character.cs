@@ -6,6 +6,7 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     [SerializeField] private Movement _movement;
+    [SerializeField] private LedgeDetector _ledgeDetector;
     [SerializeField] private Combat _combat;
     [SerializeField] private FrameActionManager _frameActionManager;
     [SerializeField] private InputReader _inputReader;
@@ -13,6 +14,8 @@ public class Character : MonoBehaviour
     [SerializeField] private UpgradeManager _upgradeManager;
 
     private CharacterState _characterState;
+
+    private event Action OnJumpPerformed;
     
     void Awake()
     {
@@ -25,6 +28,7 @@ public class Character : MonoBehaviour
         InitInput();
         InitMovement();
         InitCombat();
+        InitLedgeDetector();
         InitFrameActionManager();
     }
 
@@ -36,12 +40,14 @@ public class Character : MonoBehaviour
 
     void OnDestroy()
     {
+        OnJumpPerformed -= _ledgeDetector.JumpPerformed;
+
         _inputReader.OnMoveInput -= _movement.OnMoveInput;
         _inputReader.OnJumpInput -= _movement.OnJumpInput;
         _inputReader.OnAttackInput -= _combat.OnAttackInput;
 
         _combat.OnRequestStateChanging -= ChangeCurrentState;
-        _combat.OnRequestStopVelocity -= _movement.OnStopVelocity;
+        _combat.OnRequestPhysicsChanging -= _movement.OnReceivedPhyscisChanging;
         _combat.OnAttackPerformed -= _frameActionManager.OnActionReceived;
 
         _movement.OnChangeStateChanging -= ChangeCurrentState;
@@ -49,6 +55,10 @@ public class Character : MonoBehaviour
 
         _frameActionManager.OnFrameUpdate -= _combat.UpdateCurrentFrame;
         _frameActionManager.OnApplyForce -= _movement.ApplyForce;
+
+        _ledgeDetector.OnChangeStateChanging -= ChangeCurrentState;
+        _ledgeDetector.OnLedgeHangPerformed -= _frameActionManager.OnActionReceived;
+        _ledgeDetector.OnRequestPhysicsChanging -= _movement.OnReceivedPhyscisChanging;
     }
 
     void InitInput()
@@ -64,12 +74,21 @@ public class Character : MonoBehaviour
         _movement.OnChangeStateChanging += ChangeCurrentState;
     }
 
+    void InitLedgeDetector()
+    {
+        _ledgeDetector.Init(_characterState);
+        _ledgeDetector.OnChangeStateChanging += ChangeCurrentState;
+        _ledgeDetector.OnLedgeHangPerformed += _frameActionManager.OnActionReceived;
+        _ledgeDetector.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
+        OnJumpPerformed += _ledgeDetector.JumpPerformed;
+    }
+
     void InitCombat()
     {
         _combat.Init(_upgradeManager);
 
         _combat.OnRequestStateChanging += ChangeCurrentState;
-        _combat.OnRequestStopVelocity += _movement.OnStopVelocity;
+        _combat.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
         _combat.OnAttackPerformed += _frameActionManager.OnActionReceived;
     }
 
@@ -98,6 +117,11 @@ public class Character : MonoBehaviour
                 // _movement.ChangeCurrentMoveType(MovementTypes.Restricted);
                 break;
             }
+            case CharState.Jumping:
+            {
+                OnJumpPerformed?.Invoke();
+                break;
+            }
         }
     }
 
@@ -115,6 +139,7 @@ public enum CharState
     Free,
     Jumping,
     DoubleJumping,
+    LedgeClimbing,
     Attack,
     AirAttack
 }

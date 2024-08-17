@@ -8,5 +8,12 @@ public class AttackData : ActionData
 {
     [Header("Attack Data")]
 
+    [SerializeField] protected Vector2 _comboConnectionRange;
     [SerializeField] protected float _damage;
+
+
+
+
+    public Vector2 ComboConnectionRange => _comboConnectionRange;
+
 }

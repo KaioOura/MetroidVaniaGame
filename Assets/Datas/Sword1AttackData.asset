@@ -14,15 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animationClip: {fileID: 7400000, guid: 6670aa57e10f26c4ba0c165bdc5611c8, type: 2}
   _transitionDuration: 0.2
-  _comboConnectionRange: {x: 27, y: 38}
-  _actionMovementRelated:
-    _characterStateToSet: 3
-    _stopHorizontalVelocity: 1
+  _animationState: 1
+  _characterStateToSet: 4
+  _physicsOptions:
+    _stopHorizontalVelocity: 0
     _stopVerticalVelocity: 0
+    _updateRigidBodyContraints: 0
+    _rigidBodyConstraints: 0
   _upgradeNeeded: 0
   _frameActionForces:
   - ActionInterval: {x: 17, y: 17}
     _localForce: 1
     _force: {x: 0.5, y: 0}
   _frameActionVFXs: []
+  _comboConnectionRange: {x: 27, y: 38}
   _damage: 0

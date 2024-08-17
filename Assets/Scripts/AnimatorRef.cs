@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class AnimatorRef : MonoBehaviour
 {   
+
+    public enum AnimationState
+    {
+        Jump,
+        AttackDefault,
+        LedgeHang
+
+    }
     public static string MoveParam = "Move";
     public static string VelYParam = "VelY";
     public static string OnGroundParam = "IsOnGround";

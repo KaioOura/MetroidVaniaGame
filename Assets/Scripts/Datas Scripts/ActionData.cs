@@ -9,10 +9,10 @@ public class ActionData : ScriptableObject
     [Header("Action Data")]
     [SerializeField] protected AnimationClip _animationClip;
     [SerializeField] protected float _transitionDuration;
+    [SerializeField] protected AnimatorRef.AnimationState _animationState;
+    [SerializeField] protected CharState _characterStateToSet;
 
-    [SerializeField] protected Vector2 _comboConnectionRange;
-
-    [SerializeField] protected ActionMovementRelated _actionMovementRelated;
+    [SerializeField] protected PhysicsOptions _physicsOptions;
 
     [SerializeField] protected UpgradeEnum _upgradeNeeded;
 
@@ -22,10 +22,11 @@ public class ActionData : ScriptableObject
 
     public AnimationClip AnimationClip => _animationClip;
     public float TransitionDuration => _transitionDuration;
+    public AnimatorRef.AnimationState AnimationState => _animationState;
 
-    public Vector2 ComboConnectionRange => _comboConnectionRange;
+    public CharState CharacterStateToSet => _characterStateToSet;
 
-    public ActionMovementRelated ActionMovementRelated => _actionMovementRelated;
+    public PhysicsOptions PhysicsOptions => _physicsOptions;
 
     public UpgradeEnum UpgradeNeeded => _upgradeNeeded;
 
@@ -36,11 +37,9 @@ public class ActionData : ScriptableObject
 [Serializable]
 public class ActionMovementRelated
 {
-    [SerializeField] protected CharState _characterStateToSet;
     [SerializeField] protected bool _stopHorizontalVelocity;
     [SerializeField] protected bool _stopVerticalVelocity;
 
-    public CharState CharacterStateToSet => _characterStateToSet;
     public bool StopHorizontalVelocity => _stopHorizontalVelocity;
     public bool StopVerticalVelocity => _stopVerticalVelocity;
 }

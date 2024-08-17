@@ -20,7 +20,7 @@ public class Combat : MonoBehaviour
 
     public Action<AttackData, Action> OnAttackPerformed;
     public Action<CharState> OnRequestStateChanging;
-    public Action<bool, bool> OnRequestStopVelocity;
+    public Action<PhysicsOptions> OnRequestPhysicsChanging;
 
     public void Init(UpgradeManager upgradeManager)
     {
@@ -77,8 +77,8 @@ public class Combat : MonoBehaviour
     {
         _attackIndex = _attackIndex >= _currentAttackDataList.Length - 1 ? 0 : _attackIndex + 1;
 
-        OnRequestStateChanging?.Invoke(attackData.ActionMovementRelated.CharacterStateToSet);
-        OnRequestStopVelocity?.Invoke(attackData.ActionMovementRelated.StopHorizontalVelocity, attackData.ActionMovementRelated.StopVerticalVelocity);
+        OnRequestStateChanging?.Invoke(attackData.CharacterStateToSet);
+        OnRequestPhysicsChanging?.Invoke(attackData.PhysicsOptions);
 
         _isAttacking = true;
         _currentAttackData = attackData;

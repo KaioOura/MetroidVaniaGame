@@ -35,15 +35,15 @@ public class FrameActionManager : MonoBehaviour
 
     public void OnActionReceived(ActionData ActionData, Action EndAttack)
     {
-        _animatorRef.AnimatorOverrideController[AnimatorRef.AttackState] = ActionData.AnimationClip;
-        _animatorRef.Animator.CrossFadeInFixedTime(AnimatorRef.AttackState, ActionData.TransitionDuration);
+        _animatorRef.AnimatorOverrideController[ActionData.AnimationState.ToString()] = ActionData.AnimationClip;
+        _animatorRef.Animator.CrossFadeInFixedTime(ActionData.AnimationState.ToString(), ActionData.TransitionDuration);
 
         StopAllCoroutines();
         FrameActions(ActionData);
 
         if (FrameCounter != null)
             StopCoroutine(FrameCounter);
-        FrameCounter = CountFramesRoutine(ActionData, AnimatorRef.AttackState, ActionData.TransitionDuration, EndAttack);
+        FrameCounter = CountFramesRoutine(ActionData, ActionData.AnimationState.ToString(), ActionData.TransitionDuration, EndAttack);
         StartCoroutine(FrameCounter);
     }
 

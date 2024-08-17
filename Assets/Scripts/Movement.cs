@@ -100,12 +100,12 @@ public class Movement : MonoBehaviour
 
     void Jump(bool CanJump, bool CanDoubleJump)
     {
-        if (!CanJump && !CanDoubleJump)
-            return;
-
+        if (!CanJump && !CanDoubleJump && !CanWallJump())
+             return;
+        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _rb.AddForce(Vector2.up * _movementData.JumpForce, ForceMode2D.Impulse);
         _pressingJumpTimeTracker = Time.time + _movementData.MaxTimeGettingJumpForce;
-        _animatorRef.Animator.Play(AnimatorRef.JumpState);
+        _animatorRef.Animator.Play(AnimatorRef.AnimationState.Jump.ToString());
         OnChangeStateChanging?.Invoke(CanDoubleJump ? CharState.DoubleJumping : CharState.Jumping);
     }
 
@@ -124,7 +124,7 @@ public class Movement : MonoBehaviour
 
     bool CanJump()
     {
-        return _footCollider.IsOnGround && _currentState.CharState == CharState.Free;
+        return _footCollider.IsOnGround && _currentState.CharState is CharState.Free or CharState.LedgeClimbing;
     }
 
     bool CanDoubleJump()
@@ -132,18 +132,26 @@ public class Movement : MonoBehaviour
         return _currentState.CharState == CharState.Jumping && _upgradeManager.HasUpgrade(UpgradeEnum.DoubleJump);
     }
 
+    bool CanWallJump()
+    {
+        return !_footCollider.IsOnGround && _currentState.CharState is CharState.LedgeClimbing;
+    }
+
     bool CanWalk()
     {
         return _currentState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.AirAttack;
     }
 
-    public void OnStopVelocity(bool isHorizontal, bool isVertical)
+    public void OnReceivedPhyscisChanging(PhysicsOptions physicsOptions)
     {
-        if (isHorizontal)
+        if (physicsOptions.StopHorizontalVelocity)
             _rb.velocity = new Vector2(0, _rb.velocity.y);
 
-        if (isVertical)
+        if (physicsOptions.StopVerticalVelocity)
             _rb.velocity = new Vector2(_rb.velocity.x , 0);
+
+        if (physicsOptions.UpdateRigidBodyContraints)
+            _rb.constraints = physicsOptions.RigidbodyConstraints;
 
     }
 
