@@ -8,6 +8,7 @@ public class Character : MonoBehaviour
     [SerializeField] private Movement _movement;
     [SerializeField] private FootCollider _footCollider;
     [SerializeField] private LedgeDetector _ledgeDetector;
+    [SerializeField] private WallJump _wallJump;
     [SerializeField] private Combat _combat;
     [SerializeField] private FrameActionManager _frameActionManager;
     [SerializeField] private InputReader _inputReader;
@@ -30,6 +31,7 @@ public class Character : MonoBehaviour
         InitMovement();
         InitCombat();
         InitLedgeDetector();
+        InitWallJump();
         InitFrameActionManager();
     }
 
@@ -52,7 +54,7 @@ public class Character : MonoBehaviour
         _combat.OnAttackPerformed -= _frameActionManager.OnActionReceived;
 
         _movement.OnChangeStateChanging -= ChangeCurrentState;
-        _footCollider.OnIsOnGroundUpdate -= _movement.OnIsOnGround;
+        _footCollider.OnIsOnGroundUpdate -= _movement.IsOnGroundUpdate;
 
 
         _frameActionManager.OnFrameUpdate -= _combat.UpdateCurrentFrame;
@@ -61,6 +63,9 @@ public class Character : MonoBehaviour
         _ledgeDetector.OnChangeStateChanging -= ChangeCurrentState;
         _ledgeDetector.OnLedgeHangPerformed -= _frameActionManager.OnActionReceived;
         _ledgeDetector.OnRequestPhysicsChanging -= _movement.OnReceivedPhyscisChanging;
+
+        _wallJump.OnStateChanging -= ChangeCurrentState;
+        _wallJump.OnUpdateMovementSettings -= _movement.UpdateMovementModifiers;
     }
 
     void InitInput()
@@ -74,21 +79,30 @@ public class Character : MonoBehaviour
     {
         _movement.Init(_animatorRef, _characterState);
         _movement.OnChangeStateChanging += ChangeCurrentState;
-        _footCollider.OnIsOnGroundUpdate += _movement.OnIsOnGround;
+        _footCollider.OnIsOnGroundUpdate += _movement.IsOnGroundUpdate;
     }
 
     void InitLedgeDetector()
     {
-        _ledgeDetector.Init(_characterState);
+        _ledgeDetector.Init(_characterState, _movement.RB);
         _ledgeDetector.OnChangeStateChanging += ChangeCurrentState;
         _ledgeDetector.OnLedgeHangPerformed += _frameActionManager.OnActionReceived;
         _ledgeDetector.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
         OnJumpPerformed += _ledgeDetector.JumpPerformed;
+        _footCollider.OnIsOnGroundUpdate += _ledgeDetector.IsOnGroundUpdate;
+    }
+
+    void InitWallJump()
+    {
+        _wallJump.Init(_characterState);
+        _wallJump.OnStateChanging += ChangeCurrentState;
+        _wallJump.OnUpdateMovementSettings += _movement.UpdateMovementModifiers;
+        _wallJump.OnWallSlidePerformed += _frameActionManager.OnActionReceived;
     }
 
     void InitCombat()
     {
-        _combat.Init(_upgradeManager);
+        _combat.Init(_upgradeManager, _characterState);
 
         _combat.OnRequestStateChanging += ChangeCurrentState;
         _combat.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
@@ -125,6 +139,11 @@ public class Character : MonoBehaviour
                 OnJumpPerformed?.Invoke();
                 break;
             }
+            case CharState.WallSliding:
+            {
+
+                break;
+            }
         }
     }
 
@@ -144,5 +163,7 @@ public enum CharState
     DoubleJumping,
     LedgeClimbing,
     Attack,
-    AirAttack
+    AirAttack,
+    WallSliding,
+    WallJumping,
 }

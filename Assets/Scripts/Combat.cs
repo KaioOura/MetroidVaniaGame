@@ -10,6 +10,7 @@ public class Combat : MonoBehaviour
     [SerializeField] private FrameActionManager _frameActionManager;
 
     private UpgradeManager _upgradeManager;
+    private CharacterState _characterState;
     private int CurrentFrame;
     private bool _isAttacking;
     private int _attackIndex;
@@ -22,9 +23,10 @@ public class Combat : MonoBehaviour
     public Action<CharState> OnRequestStateChanging;
     public Action<PhysicsOptions> OnRequestPhysicsChanging;
 
-    public void Init(UpgradeManager upgradeManager)
+    public void Init(UpgradeManager upgradeManager, CharacterState characterState)
     {
         _upgradeManager = upgradeManager;
+        _characterState = characterState;
     }
 
     public void OnAttackInput(bool pressing)
@@ -35,6 +37,9 @@ public class Combat : MonoBehaviour
 
     void CheckAttack()
     {   
+        if (!CanAttack())
+            return;
+
         AttackData attackData = GetAttackData();
 
         if (_isAttacking)
@@ -49,6 +54,11 @@ public class Combat : MonoBehaviour
             return;
 
         PerformAttack(attackData);
+    }
+
+    bool CanAttack()
+    {
+        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Attack or CharState.AirAttack;
     }
 
     AttackData GetAttackData()

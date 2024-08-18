@@ -18,12 +18,23 @@ public class Movement : MonoBehaviour
     private float _pressingJumpTimeTracker;
     private bool _isOnGround;
 
+    private float _speed;
+    private float _jumpCutForce;
+    private float _jumpForce;
+    private float _maxTimeGettingJumpForce;
+    private float _fallAdditionalForce;
+    private float _maxFallVelocity;
+    private float _movementSpeedMultiplier;
+    private Vector2 _jumpForceMultiplier;
+
+    public Rigidbody2D RB => _rb;
+
     public event Action<CharState> OnChangeStateChanging;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        UpdateMovementModifiers(_movementData);
     }
 
     // Update is called once per frame
@@ -51,6 +62,15 @@ public class Movement : MonoBehaviour
 
     void CalcMovement()
     {
+        if (_currentState.CharState is CharState.WallSliding && Mathf.Abs(Move.x) > 0) //Fazer checagem em relação a direção que o player está ollhando
+    
+        {
+            UpdateMovementModifiers(_movementData);
+            OnChangeStateChanging.Invoke(CharState.Free);
+            _animatorRef.Animator.Play(AnimatorRef.AnimationState.Idle.ToString());
+        }
+
+
         if (CanWalk())
             ApplyMovementVelocity();
 
@@ -63,7 +83,7 @@ public class Movement : MonoBehaviour
     {
         FacingHandler(Move);
 
-        _rb.velocity = new Vector2(Move.x * (_movementData.Speed * Time.fixedDeltaTime), _rb.velocity.y);
+        _rb.velocity = new Vector2(Move.x * (_speed * Time.fixedDeltaTime), _rb.velocity.y);
     }
 
     void FacingHandler(Vector2 dir)
@@ -89,7 +109,7 @@ public class Movement : MonoBehaviour
             //Cortar impulso
             if (_rb.velocity.y > 0)
             {
-                _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y / _movementData.JumpCutForce);
+                _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y / _jumpCutForce);
             }
 
         }
@@ -102,9 +122,10 @@ public class Movement : MonoBehaviour
     {
         if (!CanJump && !CanDoubleJump && !CanWallJump())
              return;
+
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        _rb.AddForce(Vector2.up * _movementData.JumpForce, ForceMode2D.Impulse);
-        _pressingJumpTimeTracker = Time.time + _movementData.MaxTimeGettingJumpForce;
+        _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
+        _pressingJumpTimeTracker = Time.time + _maxTimeGettingJumpForce;
         _animatorRef.Animator.Play(AnimatorRef.AnimationState.Jump.ToString());
         OnChangeStateChanging?.Invoke(CanDoubleJump ? CharState.DoubleJumping : CharState.Jumping);
     }
@@ -113,13 +134,23 @@ public class Movement : MonoBehaviour
     {
         if (_rb.velocity.y > 0 && Time.time >= _pressingJumpTimeTracker)
         {
-            _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y / _movementData.JumpCutForce);
+            _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y / _jumpCutForce);
         }
 
         if (_rb.velocity.y < 0)
         {
-            _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y <= -_movementData.MaxFallVelocity ? -_movementData.MaxFallVelocity : _rb.velocity.y * _movementData.FallAdditionalForce);   
+            _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y <= -_maxFallVelocity ? -_maxFallVelocity : _rb.velocity.y * _fallAdditionalForce);   
         }
+    }
+
+    public void UpdateMovementModifiers(MovementData movementData)
+    {
+        _speed = movementData.Speed;
+        _jumpForce = movementData.JumpForce;
+        _jumpCutForce = movementData.JumpCutForce;
+        _fallAdditionalForce =  movementData.FallAdditionalForce;
+        _maxFallVelocity = movementData.MaxFallVelocity;
+        _maxTimeGettingJumpForce = movementData.MaxTimeGettingJumpForce;
     }
 
     bool CanJump()
@@ -134,7 +165,7 @@ public class Movement : MonoBehaviour
 
     bool CanWallJump()
     {
-        return !_isOnGround && _currentState.CharState is CharState.LedgeClimbing;
+        return !_isOnGround && _currentState.CharState is CharState.LedgeClimbing or CharState.WallSliding;
     }
 
     bool CanWalk()
@@ -164,7 +195,7 @@ public class Movement : MonoBehaviour
         _rb.AddForce(force * i, ForceMode2D.Impulse);
     }
 
-    public void OnIsOnGround(bool isGround)
+    public void IsOnGroundUpdate(bool isGround)
     {
         _isOnGround = isGround;
     }

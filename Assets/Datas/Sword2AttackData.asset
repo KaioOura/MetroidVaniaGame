@@ -17,8 +17,8 @@ MonoBehaviour:
   _animationState: 1
   _characterStateToSet: 4
   _physicsOptions:
-    _stopHorizontalVelocity: 0
-    _stopVerticalVelocity: 0
+    _stopHorizontalVelocity: 1
+    _stopVerticalVelocity: 1
     _updateRigidBodyContraints: 0
     _rigidBodyConstraints: 0
   _upgradeNeeded: 1

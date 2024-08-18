@@ -9,7 +9,9 @@ public class AnimatorRef : MonoBehaviour
     {
         Jump,
         AttackDefault,
-        LedgeHang
+        LedgeHang,
+        WallSlide,
+        Idle
 
     }
     public static string MoveParam = "Move";

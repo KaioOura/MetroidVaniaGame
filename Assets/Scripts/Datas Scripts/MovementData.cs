@@ -11,7 +11,6 @@ public class MovementData : ScriptableObject
     [SerializeField] private float _fallAdditionalForce;
     [SerializeField] private float _maxFallVelocity;
     [SerializeField] private float _maxTimeGettingJumpForce;
-    [SerializeField] private float _footRadius;
 
     public float Speed => _speed;
     public float JumpForce => _jumpForce;
@@ -19,5 +18,4 @@ public class MovementData : ScriptableObject
     public float FallAdditionalForce => _fallAdditionalForce;
     public float MaxFallVelocity => _maxFallVelocity;
     public float MaxTimeGettingJumpForce => _maxTimeGettingJumpForce;
-    public float FootRadius => _footRadius;
 }

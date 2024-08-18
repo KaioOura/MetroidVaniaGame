@@ -14,15 +14,17 @@ public class LedgeDetector : MonoBehaviour
     private CharacterState _characterState;
     private float _lastTimeHang = 0;
     private bool _isOnGround;
+    private Rigidbody2D _rb;
 
     public event Action<CharState> OnChangeStateChanging;
     public Action<PhysicsOptions> OnRequestPhysicsChanging;
     public event Action<ActionData, Action> OnLedgeHangPerformed;
 
 
-    public void Init(CharacterState characterState)
+    public void Init(CharacterState characterState, Rigidbody2D rb)
     {
         _characterState = characterState;
+        _rb = rb;
     }
 
     void Update()
@@ -40,6 +42,7 @@ public class LedgeDetector : MonoBehaviour
     {
         if (wallRay.collider == null || ledgeFound == true) return;
 
+        //Calculate hang position
         float wallDistX = wallRay.point.x - wallRay.transform.position.x;
         float wallDistY = wallRay.collider.bounds.extents.y + wallRay.collider.bounds.center.y;
 
@@ -63,7 +66,7 @@ public class LedgeDetector : MonoBehaviour
     bool CanLedgeCheck()
     {
         bool isOnCooldown = Time.time < _lastTimeHang + _ledgeData.HangCoolDown;
-        return _characterState.CharState is CharState.Jumping or CharState.DoubleJumping or CharState.Free && !isOnCooldown && _isOnGround;
+        return _characterState.CharState is CharState.Jumping or CharState.DoubleJumping or CharState.Free && !isOnCooldown && Mathf.Abs(_rb.velocity.y) > 0.1f;
     }
 
     public void JumpPerformed()
@@ -76,15 +79,15 @@ public class LedgeDetector : MonoBehaviour
         _isOnGround = IsOnGround;
     }
 
-    void OnDrawGizmos()
-    {
-        // Gizmos.color = Color.yellow;
-        // //bool ledgeFound = Physics2D.Raycast(_ledgeCheckTransform.position, transform.parent.right, 1, _ledgeCheckLayerMask); 
-        // Gizmos.DrawRay(_wallCheckTransform.position, transform.parent.right * _ledgeData.CheckDistance);
+    // void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.yellow;
+    //     bool ledgeFound = Physics2D.Raycast(_ledgeCheckTransform.position, transform.parent.right, 1, _ledgeCheckLayerMask); 
+    //     Gizmos.DrawRay(_wallCheckTransform.position, transform.parent.right * _ledgeData.CheckDistance);
 
-        // Gizmos.color = Color.white;
-        // Gizmos.DrawRay(_ledgeCheckTransform.position, transform.parent.right * _ledgeData.CheckDistance);
+    //     Gizmos.color = Color.white;
+    //     Gizmos.DrawRay(_ledgeCheckTransform.position, transform.parent.right * _ledgeData.CheckDistance);
 
-        // Gizmos.DrawRay(transform.position, transform.parent.up * -1 * 2);
-    }
+    //     Gizmos.DrawRay(transform.position, transform.parent.up * -1 * 2);
+    // }
 }
