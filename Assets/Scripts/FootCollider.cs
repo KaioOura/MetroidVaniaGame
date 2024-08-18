@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,10 +11,12 @@ public class FootCollider : MonoBehaviour
 
     public float FootRadius;
 
+    public event Action<bool> OnIsOnGroundUpdate;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        FootRadius = 0.3f;
     }
 
     // Update is called once per frame
@@ -25,6 +28,7 @@ public class FootCollider : MonoBehaviour
     void CheckGroundCollision()
     {
         IsOnGround = Physics2D.OverlapCircle(transform.position, FootRadius, _groundLayer);
+        OnIsOnGroundUpdate?.Invoke(IsOnGround);
     }
     
     void OnDrawGizmos()

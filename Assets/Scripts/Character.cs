@@ -6,6 +6,7 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     [SerializeField] private Movement _movement;
+    [SerializeField] private FootCollider _footCollider;
     [SerializeField] private LedgeDetector _ledgeDetector;
     [SerializeField] private Combat _combat;
     [SerializeField] private FrameActionManager _frameActionManager;
@@ -51,6 +52,7 @@ public class Character : MonoBehaviour
         _combat.OnAttackPerformed -= _frameActionManager.OnActionReceived;
 
         _movement.OnChangeStateChanging -= ChangeCurrentState;
+        _footCollider.OnIsOnGroundUpdate -= _movement.OnIsOnGround;
 
 
         _frameActionManager.OnFrameUpdate -= _combat.UpdateCurrentFrame;
@@ -72,6 +74,7 @@ public class Character : MonoBehaviour
     {
         _movement.Init(_animatorRef, _characterState);
         _movement.OnChangeStateChanging += ChangeCurrentState;
+        _footCollider.OnIsOnGroundUpdate += _movement.OnIsOnGround;
     }
 
     void InitLedgeDetector()

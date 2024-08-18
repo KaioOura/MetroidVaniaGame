@@ -9,7 +9,6 @@ public class Movement : MonoBehaviour
     [SerializeField] private MovementData _movementData;
     [SerializeField] private UpgradeManager _upgradeManager;
     [SerializeField] private Rigidbody2D _rb;
-    [SerializeField] private FootCollider _footCollider;
 
 
     private AnimatorRef _animatorRef;
@@ -17,13 +16,14 @@ public class Movement : MonoBehaviour
 
     private Vector2 Move;
     private float _pressingJumpTimeTracker;
+    private bool _isOnGround;
 
     public event Action<CharState> OnChangeStateChanging;
 
     // Start is called before the first frame update
     void Start()
     {
-        _footCollider.FootRadius = _movementData.FootRadius;
+
     }
 
     // Update is called once per frame
@@ -56,7 +56,7 @@ public class Movement : MonoBehaviour
 
         _animatorRef.Animator.SetFloat(AnimatorRef.MoveParam, Mathf.Abs(_rb.velocity.x));
         _animatorRef.Animator.SetFloat(AnimatorRef.VelYParam, _rb.velocity.y);
-        _animatorRef.Animator.SetBool(AnimatorRef.OnGroundParam, _footCollider.IsOnGround);
+        _animatorRef.Animator.SetBool(AnimatorRef.OnGroundParam, _isOnGround);
     }
 
     void ApplyMovementVelocity()
@@ -124,7 +124,7 @@ public class Movement : MonoBehaviour
 
     bool CanJump()
     {
-        return _footCollider.IsOnGround && _currentState.CharState is CharState.Free or CharState.LedgeClimbing;
+        return _isOnGround && _currentState.CharState is CharState.Free or CharState.LedgeClimbing;
     }
 
     bool CanDoubleJump()
@@ -134,7 +134,7 @@ public class Movement : MonoBehaviour
 
     bool CanWallJump()
     {
-        return !_footCollider.IsOnGround && _currentState.CharState is CharState.LedgeClimbing;
+        return !_isOnGround && _currentState.CharState is CharState.LedgeClimbing;
     }
 
     bool CanWalk()
@@ -162,5 +162,10 @@ public class Movement : MonoBehaviour
 
 
         _rb.AddForce(force * i, ForceMode2D.Impulse);
+    }
+
+    public void OnIsOnGround(bool isGround)
+    {
+        _isOnGround = isGround;
     }
 }
