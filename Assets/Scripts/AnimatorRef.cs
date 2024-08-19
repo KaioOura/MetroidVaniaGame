@@ -11,7 +11,8 @@ public class AnimatorRef : MonoBehaviour
         AttackDefault,
         LedgeHang,
         WallSlide,
-        Idle
+        Idle,
+        WallJump
 
     }
     public static string MoveParam = "Move";
@@ -50,5 +51,10 @@ public class AnimatorRef : MonoBehaviour
         
         if (_mainTransform == null)
             Debug.LogError("Variable MainTransform not assigned");
+    }
+
+    public bool IsFacingRight()
+    {
+        return MainTransform.eulerAngles.y == 0;
     }
 }

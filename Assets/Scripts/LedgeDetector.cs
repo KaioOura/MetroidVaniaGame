@@ -52,9 +52,12 @@ public class LedgeDetector : MonoBehaviour
 
         RaycastHit2D groundBelowRay = Physics2D.Raycast(transform.position, transform.parent.up * -1, 2, _ledgeData.LedgeCheckLayerMask);
 
+        if (groundBelowRay.collider != null)
+        {
+            if (_hangPos.y < groundBelowRay.point.y && wallRay.collider != groundBelowRay.collider) //Check if hang pos would get player inside ground
+                return;
+        }
 
-        if (_hangPos.y < groundBelowRay.point.y && wallRay.collider != groundBelowRay.collider) //Check if hang pos would get player inside ground
-            return;
 
         OnChangeStateChanging?.Invoke(CharState.LedgeClimbing);
         OnLedgeHangPerformed?.Invoke(_ledgeActionData, null);
@@ -66,7 +69,8 @@ public class LedgeDetector : MonoBehaviour
     bool CanLedgeCheck()
     {
         bool isOnCooldown = Time.time < _lastTimeHang + _ledgeData.HangCoolDown;
-        return _characterState.CharState is CharState.Jumping or CharState.DoubleJumping or CharState.Free && !isOnCooldown && Mathf.Abs(_rb.velocity.y) > 0.1f;
+        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.WallJumping
+        && !isOnCooldown && Mathf.Abs(_rb.velocity.y) > 0.1f;
     }
 
     public void JumpPerformed()

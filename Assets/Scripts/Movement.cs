@@ -6,30 +6,25 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] private MovementData _movementData;
-    [SerializeField] private UpgradeManager _upgradeManager;
     [SerializeField] private Rigidbody2D _rb;
-
+    [SerializeField] private MovementData _movementData;
+    [SerializeField] private MovementData _wallJumpMovementData;
 
     private AnimatorRef _animatorRef;
     private CharacterState _currentState;
 
     private Vector2 Move;
-    private float _pressingJumpTimeTracker;
     private bool _isOnGround;
 
     private float _speed;
-    private float _jumpCutForce;
-    private float _jumpForce;
-    private float _maxTimeGettingJumpForce;
-    private float _fallAdditionalForce;
-    private float _maxFallVelocity;
-    private float _movementSpeedMultiplier;
+
+    private float _movementSpeedMultiplier = 0.1f;
     private Vector2 _jumpForceMultiplier;
 
     public Rigidbody2D RB => _rb;
 
     public event Action<CharState> OnChangeStateChanging;
+    public event Action<MovementData> OnUpdateJumpModifiers;
 
     // Start is called before the first frame update
     void Start()
@@ -41,12 +36,6 @@ public class Movement : MonoBehaviour
     void Update()
     {
         CalcMovement();
-    }
-
-    void FixedUpdate()
-    {
-        //
-        HandleFalling();
     }
 
     public void Init(AnimatorRef animatorRef, CharacterState currentState)
@@ -62,12 +51,14 @@ public class Movement : MonoBehaviour
 
     void CalcMovement()
     {
-        if (_currentState.CharState is CharState.WallSliding && Mathf.Abs(Move.x) > 0) //Fazer checagem em relação a direção que o player está ollhando
-    
+        if (_currentState.CharState is CharState.WallSliding && _isOnGround)
         {
+            OnReceivedPhyscisChanging(_movementData.PhysicsOptions);
             UpdateMovementModifiers(_movementData);
+            OnUpdateJumpModifiers?.Invoke(_movementData);
             OnChangeStateChanging.Invoke(CharState.Free);
             _animatorRef.Animator.Play(AnimatorRef.AnimationState.Idle.ToString());
+            FacingHandler(_animatorRef.IsFacingRight() ? false : true);
         }
 
 
@@ -83,7 +74,22 @@ public class Movement : MonoBehaviour
     {
         FacingHandler(Move);
 
-        _rb.velocity = new Vector2(Move.x * (_speed * Time.fixedDeltaTime), _rb.velocity.y);
+        if (_currentState.CharState is CharState.WallJumping)
+        {
+            _movementSpeedMultiplier = Mathf.Lerp(_movementSpeedMultiplier, 5, _wallJumpMovementData.SpeedMultiplier * Time.fixedDeltaTime);
+
+            _rb.AddForce(new Vector2(Move.x * (_speed * Time.fixedDeltaTime) * _movementSpeedMultiplier, 0));
+
+
+            float velX = Mathf.Clamp(_rb.velocity.x, -_wallJumpMovementData.MaxHorizontalVelocity, _wallJumpMovementData.MaxHorizontalVelocity);
+
+            _rb.velocity = new Vector2(velX, _rb.velocity.y);
+        }
+        else
+        {
+            _rb.velocity = new Vector2(Move.x * (_speed * Time.fixedDeltaTime), _rb.velocity.y);
+        }
+
     }
 
     void FacingHandler(Vector2 dir)
@@ -97,80 +103,43 @@ public class Movement : MonoBehaviour
             _animatorRef.MainTransform.eulerAngles = new Vector2(_animatorRef.MainTransform.eulerAngles.x, 180);
     }
 
-    public void OnJumpInput(bool isPressing)
+    public void FacingHandler(bool shouldFaceRight)
     {
-        HandleJump(isPressing);
-    }
-
-    void HandleJump(bool isPressing)
-    {
-        if (!isPressing)
-        {
-            //Cortar impulso
-            if (_rb.velocity.y > 0)
-            {
-                _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y / _jumpCutForce);
-            }
-
-        }
+        if (shouldFaceRight)
+            _animatorRef.MainTransform.eulerAngles = new Vector2(_animatorRef.MainTransform.eulerAngles.x, 0);
         else
-            Jump(CanJump(), CanDoubleJump());
-
+            _animatorRef.MainTransform.eulerAngles = new Vector2(_animatorRef.MainTransform.eulerAngles.x, 180);
     }
 
-    void Jump(bool CanJump, bool CanDoubleJump)
+    int IsFacingRight()
     {
-        if (!CanJump && !CanDoubleJump && !CanWallJump())
-             return;
-
-        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
-        _pressingJumpTimeTracker = Time.time + _maxTimeGettingJumpForce;
-        _animatorRef.Animator.Play(AnimatorRef.AnimationState.Jump.ToString());
-        OnChangeStateChanging?.Invoke(CanDoubleJump ? CharState.DoubleJumping : CharState.Jumping);
+        if (_animatorRef.IsFacingRight())
+            return 1;
+        else
+            return -1;
     }
 
-    void HandleFalling()
+    bool CancelWallJump()
     {
-        if (_rb.velocity.y > 0 && Time.time >= _pressingJumpTimeTracker)
-        {
-            _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y / _jumpCutForce);
-        }
-
-        if (_rb.velocity.y < 0)
-        {
-            _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y <= -_maxFallVelocity ? -_maxFallVelocity : _rb.velocity.y * _fallAdditionalForce);   
-        }
+        return Move.x > 0 && _animatorRef.MainTransform.eulerAngles.y == 180 ||
+        Move.x < 0 && _animatorRef.MainTransform.eulerAngles.y == 0;
     }
 
     public void UpdateMovementModifiers(MovementData movementData)
     {
+        if (movementData == null)
+            movementData = _movementData;
+
         _speed = movementData.Speed;
-        _jumpForce = movementData.JumpForce;
-        _jumpCutForce = movementData.JumpCutForce;
-        _fallAdditionalForce =  movementData.FallAdditionalForce;
-        _maxFallVelocity = movementData.MaxFallVelocity;
-        _maxTimeGettingJumpForce = movementData.MaxTimeGettingJumpForce;
+        _movementSpeedMultiplier = 0;
     }
 
-    bool CanJump()
-    {
-        return _isOnGround && _currentState.CharState is CharState.Free or CharState.LedgeClimbing;
-    }
 
-    bool CanDoubleJump()
-    {
-        return _currentState.CharState == CharState.Jumping && _upgradeManager.HasUpgrade(UpgradeEnum.DoubleJump);
-    }
-
-    bool CanWallJump()
-    {
-        return !_isOnGround && _currentState.CharState is CharState.LedgeClimbing or CharState.WallSliding;
-    }
 
     bool CanWalk()
     {
-        return _currentState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.AirAttack;
+        return _currentState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping 
+        or CharState.AirAttack or CharState.Falling or CharState.WallJumping;
     }
 
     public void OnReceivedPhyscisChanging(PhysicsOptions physicsOptions)
@@ -179,7 +148,7 @@ public class Movement : MonoBehaviour
             _rb.velocity = new Vector2(0, _rb.velocity.y);
 
         if (physicsOptions.StopVerticalVelocity)
-            _rb.velocity = new Vector2(_rb.velocity.x , 0);
+            _rb.velocity = new Vector2(_rb.velocity.x, 0);
 
         if (physicsOptions.UpdateRigidBodyContraints)
             _rb.constraints = physicsOptions.RigidbodyConstraints;
@@ -192,7 +161,7 @@ public class Movement : MonoBehaviour
         int i = IsLocal == true ? facingRight == true ? 1 : -1 : 1; //Need to refactor
 
 
-        _rb.AddForce(force * i, ForceMode2D.Impulse);
+        _rb.AddForce(new Vector2(force.x * i, force.y), ForceMode2D.Impulse);
     }
 
     public void IsOnGroundUpdate(bool isGround)

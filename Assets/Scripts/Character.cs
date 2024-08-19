@@ -8,7 +8,8 @@ public class Character : MonoBehaviour
     [SerializeField] private Movement _movement;
     [SerializeField] private FootCollider _footCollider;
     [SerializeField] private LedgeDetector _ledgeDetector;
-    [SerializeField] private WallJump _wallJump;
+    [SerializeField] private Jump _jump;
+    [SerializeField] private WallJump _wallSlide;
     [SerializeField] private Combat _combat;
     [SerializeField] private FrameActionManager _frameActionManager;
     [SerializeField] private InputReader _inputReader;
@@ -18,7 +19,7 @@ public class Character : MonoBehaviour
     private CharacterState _characterState;
 
     private event Action OnJumpPerformed;
-    
+
     void Awake()
     {
         _characterState = new CharacterState();
@@ -29,16 +30,17 @@ public class Character : MonoBehaviour
     {
         InitInput();
         InitMovement();
+        InitJump();
         InitCombat();
         InitLedgeDetector();
-        InitWallJump();
+        InitWallSlide();
         InitFrameActionManager();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnDestroy()
@@ -46,7 +48,6 @@ public class Character : MonoBehaviour
         OnJumpPerformed -= _ledgeDetector.JumpPerformed;
 
         _inputReader.OnMoveInput -= _movement.OnMoveInput;
-        _inputReader.OnJumpInput -= _movement.OnJumpInput;
         _inputReader.OnAttackInput -= _combat.OnAttackInput;
 
         _combat.OnRequestStateChanging -= ChangeCurrentState;
@@ -56,6 +57,8 @@ public class Character : MonoBehaviour
         _movement.OnChangeStateChanging -= ChangeCurrentState;
         _footCollider.OnIsOnGroundUpdate -= _movement.IsOnGroundUpdate;
 
+        _jump.OnChangeStateChanging -= ChangeCurrentState;
+        _footCollider.OnIsOnGroundUpdate -= _jump.IsOnGroundUpdate;
 
         _frameActionManager.OnFrameUpdate -= _combat.UpdateCurrentFrame;
         _frameActionManager.OnApplyForce -= _movement.ApplyForce;
@@ -64,14 +67,14 @@ public class Character : MonoBehaviour
         _ledgeDetector.OnLedgeHangPerformed -= _frameActionManager.OnActionReceived;
         _ledgeDetector.OnRequestPhysicsChanging -= _movement.OnReceivedPhyscisChanging;
 
-        _wallJump.OnStateChanging -= ChangeCurrentState;
-        _wallJump.OnUpdateMovementSettings -= _movement.UpdateMovementModifiers;
+        _wallSlide.OnStateChanging -= ChangeCurrentState;
+        _wallSlide.OnUpdateMovementSettings -= _movement.UpdateMovementModifiers;
     }
 
     void InitInput()
     {
         _inputReader.OnMoveInput += _movement.OnMoveInput;
-        _inputReader.OnJumpInput += _movement.OnJumpInput;
+        _inputReader.OnJumpInput += _jump.OnJumpInput;
         _inputReader.OnAttackInput += _combat.OnAttackInput;
     }
 
@@ -79,7 +82,20 @@ public class Character : MonoBehaviour
     {
         _movement.Init(_animatorRef, _characterState);
         _movement.OnChangeStateChanging += ChangeCurrentState;
+        _movement.OnUpdateJumpModifiers += _jump.UpdateJumpModifiers;
         _footCollider.OnIsOnGroundUpdate += _movement.IsOnGroundUpdate;
+    }
+
+    void InitJump()
+    {
+        _jump.Init(_characterState);
+        _jump.OnChangeStateChanging += ChangeCurrentState;
+        _jump.OnUpdateMovementModifiers += _movement.UpdateMovementModifiers;
+        _jump.OnJumpPerformed += _frameActionManager.OnActionReceived;
+        _jump.OnWallJumpPerformed += _frameActionManager.OnActionReceived;
+        _jump.OnRequestFacingChange += _movement.FacingHandler;
+        _jump.OnChangeStateChanging += ChangeCurrentState;
+        _footCollider.OnIsOnGroundUpdate += _jump.IsOnGroundUpdate;
     }
 
     void InitLedgeDetector()
@@ -89,15 +105,18 @@ public class Character : MonoBehaviour
         _ledgeDetector.OnLedgeHangPerformed += _frameActionManager.OnActionReceived;
         _ledgeDetector.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
         OnJumpPerformed += _ledgeDetector.JumpPerformed;
+        OnJumpPerformed += _wallSlide.JumpPerformed;
         _footCollider.OnIsOnGroundUpdate += _ledgeDetector.IsOnGroundUpdate;
     }
 
-    void InitWallJump()
+    void InitWallSlide()
     {
-        _wallJump.Init(_characterState);
-        _wallJump.OnStateChanging += ChangeCurrentState;
-        _wallJump.OnUpdateMovementSettings += _movement.UpdateMovementModifiers;
-        _wallJump.OnWallSlidePerformed += _frameActionManager.OnActionReceived;
+        _wallSlide.Init(_characterState);
+        _wallSlide.OnStateChanging += ChangeCurrentState;
+        _wallSlide.OnUpdateMovementSettings += _movement.UpdateMovementModifiers;
+        _wallSlide.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
+        _wallSlide.OnUpdateMovementSettings += _jump.UpdateJumpModifiers;
+        _wallSlide.OnRequestStateChanging += _frameActionManager.OnActionReceived;
     }
 
     void InitCombat()
@@ -105,7 +124,7 @@ public class Character : MonoBehaviour
         _combat.Init(_upgradeManager, _characterState);
 
         _combat.OnRequestStateChanging += ChangeCurrentState;
-        _combat.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
+        //_combat.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
         _combat.OnAttackPerformed += _frameActionManager.OnActionReceived;
     }
 
@@ -116,34 +135,36 @@ public class Character : MonoBehaviour
         _frameActionManager.OnApplyForce += _movement.ApplyForce;
 
         _frameActionManager.OnFrameUpdate += _combat.UpdateCurrentFrame;
+        _frameActionManager.OnRequestStateChanging += ChangeCurrentState;
+        _frameActionManager.OnOverridePhysics += _movement.OnReceivedPhyscisChanging;
     }
 
     public void ChangeCurrentState(CharState characterState)
     {
         _characterState.CharState = characterState;
 
-        switch(_characterState.CharState)
+        switch (_characterState.CharState)
         {
             case CharState.Free:
-            {
-                // _movement.ChangeCurrentMoveType(MovementTypes.Free);
-                break;
-            }
+                {
+                    // _movement.ChangeCurrentMoveType(MovementTypes.Free);
+                    break;
+                }
             case CharState.Attack:
-            {
-                // _movement.ChangeCurrentMoveType(MovementTypes.Restricted);
-                break;
-            }
-            case CharState.Jumping:
-            {
-                OnJumpPerformed?.Invoke();
-                break;
-            }
+                {
+                    // _movement.ChangeCurrentMoveType(MovementTypes.Restricted);
+                    break;
+                }
+            case CharState.Jumping or CharState.DoubleJumping:
+                {
+                    OnJumpPerformed?.Invoke();
+                    break;
+                }
             case CharState.WallSliding:
-            {
+                {
 
-                break;
-            }
+                    break;
+                }
         }
     }
 
@@ -166,4 +187,5 @@ public enum CharState
     AirAttack,
     WallSliding,
     WallJumping,
+    Falling
 }

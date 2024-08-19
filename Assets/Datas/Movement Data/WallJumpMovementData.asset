@@ -10,12 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a09f48a379673b14fa0cdbb89a5a8582, type: 3}
-  m_Name: MovementData
+  m_Name: WallJumpMovementData
   m_EditorClassIdentifier: 
-  _speed: 200
-  _jumpForce: 8
-  _jumpCutForce: 2
+  _speed: 300
+  _speedMultiplier: 1.5
+  _jumpForce: 9
+  _jumpHorizontalForce: 20
+  _jumpCutForce: 1
   _fallAdditionalForce: 1.2
   _maxFallVelocity: 8
-  _maxTimeGettingJumpForce: 0.21
-  _footRadius: 0.3
+  _maxTimeGettingJumpForce: 0
+  _maxTimeWallJump: 0.2
+  _maxHorizontalVelocity: 9.5
+  _physicsOptions:
+    _stopHorizontalVelocity: 0
+    _stopVerticalVelocity: 0
+    _updateRigidBodyContraints: 0
+    _rigidBodyConstraints: 0

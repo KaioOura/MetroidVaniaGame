@@ -58,7 +58,7 @@ public class Combat : MonoBehaviour
 
     bool CanAttack()
     {
-        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Attack or CharState.AirAttack;
+        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.Attack or CharState.AirAttack;
     }
 
     AttackData GetAttackData()

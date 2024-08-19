@@ -9,24 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e9a2daf839fffa438d62d7efe7aaa34, type: 3}
-  m_Name: Sword1AttackData
+  m_Script: {fileID: 11500000, guid: 5a58bafbe4f052b4dbf2f4fd2021d85f, type: 3}
+  m_Name: JumpActionData
   m_EditorClassIdentifier: 
-  _animationClip: {fileID: 7400000, guid: 6670aa57e10f26c4ba0c165bdc5611c8, type: 2}
-  _transitionDuration: 0.2
-  _animationState: 1
-  _characterStateToSet: 4
+  _animationClip: {fileID: 7400000, guid: 0afe6e63cc1afd64bb8ac96601f6225f, type: 2}
+  _transitionDuration: 0
+  _animationState: 0
+  _characterStateToSet: 1
   _overridePhysics: 1
   _physicsOptions:
-    _stopHorizontalVelocity: 1
+    _stopHorizontalVelocity: 0
     _stopVerticalVelocity: 1
     _updateRigidBodyContraints: 0
     _rigidBodyConstraints: 0
   _upgradeNeeded: 0
-  _frameActionForces:
-  - ActionInterval: {x: 17, y: 17}
-    _localForce: 1
-    _force: {x: 0.5, y: 0}
+  _frameActionForces: []
   _frameActionVFXs: []
-  _comboConnectionRange: {x: 27, y: 38}
-  _damage: 0

@@ -12,8 +12,8 @@ public class ActionData : ScriptableObject
     [SerializeField] protected AnimatorRef.AnimationState _animationState;
     [SerializeField] protected CharState _characterStateToSet;
 
+    [SerializeField] protected bool _overridePhysics;
     [SerializeField] protected PhysicsOptions _physicsOptions;
-
     [SerializeField] protected UpgradeEnum _upgradeNeeded;
 
     [SerializeField] List<FrameActionForces> _frameActionForces = new List<FrameActionForces>();
@@ -25,7 +25,7 @@ public class ActionData : ScriptableObject
     public AnimatorRef.AnimationState AnimationState => _animationState;
 
     public CharState CharacterStateToSet => _characterStateToSet;
-
+    public bool OverridePhysics => _overridePhysics;
     public PhysicsOptions PhysicsOptions => _physicsOptions;
 
     public UpgradeEnum UpgradeNeeded => _upgradeNeeded;

@@ -26,6 +26,8 @@ public class FrameActionManager : MonoBehaviour
 
     public event Action<int> OnFrameUpdate;
     public event Action<Vector2, bool> OnApplyForce;
+    public event Action<PhysicsOptions> OnOverridePhysics;
+    public Action<CharState> OnRequestStateChanging;
 
 
     public void Init(AnimatorRef animatorRef)
@@ -37,6 +39,7 @@ public class FrameActionManager : MonoBehaviour
     {
         _animatorRef.AnimatorOverrideController[ActionData.AnimationState.ToString()] = ActionData.AnimationClip;
         _animatorRef.Animator.CrossFadeInFixedTime(ActionData.AnimationState.ToString(), ActionData.TransitionDuration);
+        OnRequestStateChanging?.Invoke(ActionData.CharacterStateToSet);
 
         StopAllCoroutines();
         FrameActions(ActionData);
@@ -83,12 +86,17 @@ public class FrameActionManager : MonoBehaviour
 
     public void FrameActions(ActionData ActionData)
     {
+        if (ActionData.OverridePhysics)
+        {
+            OnOverridePhysics?.Invoke(ActionData.PhysicsOptions);
+        }
+
         if (ActionData.FrameActionForces.Count > 0)
         {
             foreach (var action in ActionData.FrameActionForces)
             {
                 IEnumerator routine = FrameActionRoutine(action.ActionInterval, () => OnApplyForce?.Invoke(action.Force, action.LocalForce));
-                Debug.Log(action.ActionInterval);
+                //Debug.Log(action.ActionInterval);
                 StartCoroutine(routine);
             }
 

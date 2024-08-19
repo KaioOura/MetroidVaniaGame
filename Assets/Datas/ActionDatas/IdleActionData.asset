@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a58bafbe4f052b4dbf2f4fd2021d85f, type: 3}
+  m_Name: IdleActionData
+  m_EditorClassIdentifier: 
+  _animationClip: {fileID: 7400000, guid: e0a9402ac01320645894a6ddd2658cdc, type: 2}
+  _transitionDuration: 0
+  _animationState: 4
+  _characterStateToSet: 0
+  _overridePhysics: 1
+  _physicsOptions:
+    _stopHorizontalVelocity: 0
+    _stopVerticalVelocity: 0
+    _updateRigidBodyContraints: 1
+    _rigidBodyConstraints: 4
+  _upgradeNeeded: 0
+  _frameActionForces: []
+  _frameActionVFXs: []
