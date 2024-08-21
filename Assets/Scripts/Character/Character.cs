@@ -12,6 +12,7 @@ public class Character : MonoBehaviour
     [SerializeField] private WallJump _wallSlide;
     [SerializeField] private Dash _dash; 
     [SerializeField] private Combat _combat;
+    [SerializeField] private ColliderCreator _colliderCreator;
     [SerializeField] private FrameActionManager _frameActionManager;
     [SerializeField] private InputReader _inputReader;
     [SerializeField] private AnimatorRef _animatorRef;
@@ -150,11 +151,14 @@ public class Character : MonoBehaviour
     {
         _frameActionManager.Init(_animatorRef);
 
+        _frameActionManager.OnRequestStateChanging += ChangeCurrentState;
+        
         _frameActionManager.OnApplyForce += _movement.ApplyForce;
+        _frameActionManager.OnOverridePhysics += _movement.OnReceivedPhyscisChanging;
 
         _frameActionManager.OnFrameUpdate += _combat.UpdateCurrentFrame;
-        _frameActionManager.OnRequestStateChanging += ChangeCurrentState;
-        _frameActionManager.OnOverridePhysics += _movement.OnReceivedPhyscisChanging;
+
+        _frameActionManager.OnRequestCollider += _colliderCreator.OnReceivedColliderRequest;
     }
 
     public void ChangeCurrentState(CharState characterState)

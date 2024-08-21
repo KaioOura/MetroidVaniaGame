@@ -11,9 +11,9 @@ public class FrameActionManager : MonoBehaviour
     private IEnumerator FrameCounter;
 
     private int currentFrame;
-    private int CurrentFrame 
+    private int CurrentFrame
     {
-        get 
+        get
         {
             return currentFrame;
         }
@@ -27,6 +27,7 @@ public class FrameActionManager : MonoBehaviour
     public event Action<int> OnFrameUpdate;
     public event Action<Vector2, bool> OnApplyForce;
     public event Action<PhysicsOptions> OnOverridePhysics;
+    public event Action<ColliderInfos> OnRequestCollider;
     public Action<CharState> OnRequestStateChanging;
 
 
@@ -67,7 +68,7 @@ public class FrameActionManager : MonoBehaviour
                 time += Time.deltaTime;
                 normalizedTransitionTime = time / transitionDurantion;
                 CurrentFrame = frame = (int)(normalizedTransitionTime / (1 / (transitionDurantion * attackData.AnimationClip.frameRate)) + 1);
-                Debug.Log("Counting frame:" + frame);
+                //Debug.Log("Counting frame:" + frame);
                 yield return null;
             }
         }
@@ -78,12 +79,12 @@ public class FrameActionManager : MonoBehaviour
         {
             float normalizedTime = _animatorRef.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
             CurrentFrame = frame = (int)(normalizedTime / (1 / maxFrame) + 1);
-            Debug.Log("Max frame:" + Math.Floor(maxFrame));
-            Debug.Log("Counting frame:" + frame);
+            //Debug.Log("Max frame:" + Math.Floor(maxFrame));
+            //Debug.Log("Counting frame:" + frame);
             yield return null;
         }
 
-        Debug.Log("End anim");
+        //Debug.Log("End anim");
         StopAllCoroutines();
         EndAttack?.Invoke();
     }
@@ -112,6 +113,21 @@ public class FrameActionManager : MonoBehaviour
             {
                 //IEnumerator routine = FrameActionRoutine(action.ActionInterval, () => OnApplyForce(action.Force));
                 //StartCoroutine(routine);
+            }
+        }
+
+        AttackData attackData = ActionData as AttackData;
+
+        if (attackData != null)
+        {
+            if (attackData.FrameActionHitboxes.Length > 0)
+            {
+                foreach (var attack in attackData.FrameActionHitboxes)
+                {
+                    IEnumerator routine = FrameActionRoutine(attack.ActionInterval, () => OnRequestCollider?.Invoke(attack.ColliderInfos));
+                    //Debug.Log(action.ActionInterval);
+                    StartCoroutine(routine);
+                }
             }
         }
     }

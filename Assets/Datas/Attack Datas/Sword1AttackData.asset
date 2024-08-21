@@ -28,5 +28,21 @@ MonoBehaviour:
     _localForce: 1
     _force: {x: 0.5, y: 0}
   _frameActionVFXs: []
+  _colliderIndex: 0
+  _frameActionHitboxes:
+  - ActionInterval: {x: 22, y: 22}
+    ColliderInfos:
+      _colliderTypes: 0
+      _isActive: 1
+      _pos: {x: 0.836, y: 0.981}
+      _rot: 29.025309
+      _scale: {x: 0.9518986, y: 1.3057976}
+  - ActionInterval: {x: 30, y: 30}
+    ColliderInfos:
+      _colliderTypes: 0
+      _isActive: 0
+      _pos: {x: 0, y: 0}
+      _rot: 0
+      _scale: {x: 0, y: 0}
   _comboConnectionRange: {x: 27, y: 38}
   _damage: 0

@@ -16,6 +16,7 @@ MonoBehaviour:
   _transitionDuration: 0
   _animationState: 1
   _characterStateToSet: 4
+  _overridePhysics: 0
   _physicsOptions:
     _stopHorizontalVelocity: 1
     _stopVerticalVelocity: 1
@@ -27,5 +28,14 @@ MonoBehaviour:
     _localForce: 1
     _force: {x: 0.1, y: 0}
   _frameActionVFXs: []
+  _colliderIndex: 0
+  _frameActionHitboxes:
+  - ActionInterval: {x: 5, y: 5}
+    ColliderInfos:
+      _colliderTypes: 0
+      _isActive: 0
+      _pos: {x: 0, y: 0}
+      _rot: 0
+      _scale: {x: 0, y: 0}
   _comboConnectionRange: {x: 20, y: 28}
   _damage: 0
