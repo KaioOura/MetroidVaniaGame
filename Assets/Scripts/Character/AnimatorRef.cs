@@ -12,7 +12,9 @@ public class AnimatorRef : MonoBehaviour
         LedgeHang,
         WallSlide,
         Idle,
-        WallJump
+        WallJump,
+        DashAir,
+        DashGround
 
     }
     public static string MoveParam = "Move";

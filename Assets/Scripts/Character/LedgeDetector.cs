@@ -69,8 +69,13 @@ public class LedgeDetector : MonoBehaviour
     bool CanLedgeCheck()
     {
         bool isOnCooldown = Time.time < _lastTimeHang + _ledgeData.HangCoolDown;
-        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.WallJumping
-        && !isOnCooldown && Mathf.Abs(_rb.velocity.y) > 0.1f;
+        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.WallJumping or CharState.Dashing
+        && !isOnCooldown && VelCheck();
+    }
+
+    bool VelCheck() //Used to check if player Y when dashing.
+    {
+        return _characterState.CharState is CharState.Dashing ? true : Mathf.Abs(_rb.velocity.y) > 0.1f;
     }
 
     public void JumpPerformed()
@@ -86,7 +91,6 @@ public class LedgeDetector : MonoBehaviour
     // void OnDrawGizmos()
     // {
     //     Gizmos.color = Color.yellow;
-    //     bool ledgeFound = Physics2D.Raycast(_ledgeCheckTransform.position, transform.parent.right, 1, _ledgeCheckLayerMask); 
     //     Gizmos.DrawRay(_wallCheckTransform.position, transform.parent.right * _ledgeData.CheckDistance);
 
     //     Gizmos.color = Color.white;

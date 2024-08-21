@@ -168,7 +168,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   IsOnGround: 0
-  FootRadius: 0.3
+  FootRadius: 0.21
 --- !u!1 &106784276
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,7 +186,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &106784277
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -448,7 +448,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &141490591
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -687,7 +687,7 @@ Transform:
   m_GameObject: {fileID: 178336707}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.25, y: -2.186, z: 0}
+  m_LocalPosition: {x: 3.25, y: -3.03, z: 0}
   m_LocalScale: {x: 0.8538632, y: 0.2321325, z: 0.27}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -750,6 +750,7 @@ GameObject:
   - component: {fileID: 311081535}
   - component: {fileID: 311081536}
   - component: {fileID: 311081537}
+  - component: {fileID: 311081538}
   m_Layer: 0
   m_Name: Movement
   m_TagString: Untagged
@@ -786,6 +787,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rb: {fileID: 1225023785}
+  _capsuleCollider2D: {fileID: 383017236}
   _movementData: {fileID: 11400000, guid: ef0f13927779bc74c8c844c2d5040acc, type: 2}
   _wallJumpMovementData: {fileID: 11400000, guid: 3872c8452e321234c8a215bc27580c81, type: 2}
 --- !u!114 &311081536
@@ -827,6 +829,28 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _checkDistance: 0.4
+--- !u!114 &311081538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311081533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad555bd56d6227a4f88f38e814ecaaae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dashData: {fileID: 11400000, guid: df7677a0b4f163b44bbd4b46d994f7e6, type: 2}
+  _dashGroundCenter: {x: -0.02337702, y: -0.2864951}
+  _dashGroundSize: {x: 0.453246, y: 0.6257145}
+  _dashActionData: {fileID: 11400000, guid: 81578aba30ca85d46beddc0e8008875b, type: 2}
+  _rollActionData: {fileID: 11400000, guid: 37e18e8e2ebbfbc44bc76ee149cfa1f6, type: 2}
+  _physicsOptionsReset:
+    _stopHorizontalVelocity: 0
+    _stopVerticalVelocity: 0
+    _updateRigidBodyContraints: 1
+    _rigidBodyConstraints: 4
 --- !u!1 &326844035
 GameObject:
   m_ObjectHideFlags: 0
@@ -894,7 +918,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &381347015
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1074,8 +1098,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.023377016, y: 0.017532706}
-  m_Size: {x: 0.45324597, y: 1.2337701}
+  m_Offset: {x: -0.023377016, y: 0.033386827}
+  m_Size: {x: 0.45324597, y: 1.2654784}
   m_Direction: 0
 --- !u!1 &425532390
 GameObject:
@@ -1726,7 +1750,7 @@ Transform:
   m_GameObject: {fileID: 713709494}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3, y: 2.1155, z: 0}
+  m_LocalPosition: {x: -0.3, y: -3.82, z: 0}
   m_LocalScale: {x: 0.5879609, y: 5.515872, z: 0.27}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2088,6 +2112,7 @@ MonoBehaviour:
   _ledgeDetector: {fileID: 326844037}
   _jump: {fileID: 311081536}
   _wallSlide: {fileID: 311081537}
+  _dash: {fileID: 311081538}
   _combat: {fileID: 625791675}
   _frameActionManager: {fileID: 847965562}
   _inputReader: {fileID: 1225023783}
@@ -2601,7 +2626,7 @@ Transform:
   m_GameObject: {fileID: 2122025630}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.101, y: 0.315, z: 0}
+  m_LocalPosition: {x: -0.101, y: 0.219, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

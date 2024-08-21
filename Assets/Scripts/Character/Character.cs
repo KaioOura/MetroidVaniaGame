@@ -10,6 +10,7 @@ public class Character : MonoBehaviour
     [SerializeField] private LedgeDetector _ledgeDetector;
     [SerializeField] private Jump _jump;
     [SerializeField] private WallJump _wallSlide;
+    [SerializeField] private Dash _dash; 
     [SerializeField] private Combat _combat;
     [SerializeField] private FrameActionManager _frameActionManager;
     [SerializeField] private InputReader _inputReader;
@@ -34,6 +35,7 @@ public class Character : MonoBehaviour
         InitCombat();
         InitLedgeDetector();
         InitWallSlide();
+        InitDash();
         InitFrameActionManager();
     }
 
@@ -76,6 +78,7 @@ public class Character : MonoBehaviour
         _inputReader.OnMoveInput += _movement.OnMoveInput;
         _inputReader.OnJumpInput += _jump.OnJumpInput;
         _inputReader.OnAttackInput += _combat.OnAttackInput;
+        _inputReader.OnDashInput += _dash.OnDashInput;
     }
 
     void InitMovement()
@@ -117,6 +120,20 @@ public class Character : MonoBehaviour
         _wallSlide.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
         _wallSlide.OnUpdateMovementSettings += _jump.UpdateJumpModifiers;
         _wallSlide.OnRequestStateChanging += _frameActionManager.OnActionReceived;
+        _wallSlide.OnWallSlidePerformed += _jump.ResetJumpCount;
+    }
+
+    void InitDash()
+    {
+        _dash.Init(_characterState);
+        _dash.OnDashPerformed += _frameActionManager.OnActionReceived;
+        _dash.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
+        _dash.OnRequestMovementReset += _movement.UpdateMovementModifiers;
+        _dash.OnRequestMovementReset += _jump.UpdateJumpModifiers;
+        _dash.OnRequestFacingChange += _movement.FacingHandler;
+        _dash.OnRequestHitBoxChanging += _movement.UpdateColliderSize;
+        _footCollider.OnIsOnGroundUpdate += _dash.IsOnGroundUpdate;
+
     }
 
     void InitCombat()
@@ -160,11 +177,12 @@ public class Character : MonoBehaviour
                     OnJumpPerformed?.Invoke();
                     break;
                 }
-            case CharState.WallSliding:
-                {
-
+            case CharState.Falling:
+                {   
+                    _movement.UpdateMovementModifiers(null);
                     break;
                 }
+            
         }
     }
 
@@ -187,5 +205,6 @@ public enum CharState
     AirAttack,
     WallSliding,
     WallJumping,
-    Falling
+    Falling,
+    Dashing
 }

@@ -10,6 +10,7 @@ public class InputReader : MonoBehaviour
     public Action<Vector2> OnMoveInput;
     public Action<bool> OnJumpInput;
     public Action<bool> OnAttackInput;
+    public Action<bool> OnDashInput;
 
     void Awake()
     {
@@ -41,5 +42,10 @@ public class InputReader : MonoBehaviour
     public void OnAttack(InputValue ctx)
     {
         OnAttackInput?.Invoke(ctx.Get<float>() == 1);
+    }
+
+    public void OnDash(InputValue ctx)
+    {
+        OnDashInput?.Invoke(ctx.Get<float>() == 1);
     }
 }

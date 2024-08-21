@@ -114,7 +114,7 @@ public class Jump : MonoBehaviour
     {
         OnUpdateMovementModifiers(_standardMovementData);
         UpdateJumpModifiers(_standardMovementData);
-        _jumpCounts = 1;
+        ResetJumpCount();
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _pressingJumpTimeTracker = Time.time + _maxTimeGettingJumpForce;
         OnJumpPerformed?.Invoke(_jumpActionData, null);
@@ -127,7 +127,7 @@ public class Jump : MonoBehaviour
     {
         OnUpdateMovementModifiers(_wallJumpMovementData);
         UpdateJumpModifiers(_wallJumpMovementData);
-        _jumpCounts = 1;
+        ResetJumpCount();
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         bool faceRight = transform.parent.eulerAngles.y == 180 ? true : false;
@@ -153,7 +153,8 @@ public class Jump : MonoBehaviour
 
     bool CanDoubleJump()
     {
-        return _currentState.CharState is CharState.Jumping or CharState.Falling or CharState.WallJumping && _upgradeManager.HasUpgrade(UpgradeEnum.DoubleJump)
+        return _currentState.CharState is CharState.Jumping or CharState.Falling or CharState.WallJumping or CharState.Dashing
+        && _upgradeManager.HasUpgrade(UpgradeEnum.DoubleJump)
         && _jumpCounts < 2;
     }
 
@@ -220,6 +221,11 @@ public class Jump : MonoBehaviour
     {
         OnUpdateMovementModifiers(_standardMovementData);
         UpdateJumpModifiers(_standardMovementData);
+    }
+
+    public void ResetJumpCount()
+    {
+        _jumpCounts = 1;
     }
 
     public void IsOnGroundUpdate(bool isGround)

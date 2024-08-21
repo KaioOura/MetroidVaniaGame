@@ -67,19 +67,23 @@ public class FrameActionManager : MonoBehaviour
                 time += Time.deltaTime;
                 normalizedTransitionTime = time / transitionDurantion;
                 CurrentFrame = frame = (int)(normalizedTransitionTime / (1 / (transitionDurantion * attackData.AnimationClip.frameRate)) + 1);
+                Debug.Log("Counting frame:" + frame);
                 yield return null;
             }
         }
 
         yield return new WaitForEndOfFrame();
 
-        while (frame < Math.Ceiling(maxFrame))
+        while (frame < Math.Floor(maxFrame))
         {
             float normalizedTime = _animatorRef.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
             CurrentFrame = frame = (int)(normalizedTime / (1 / maxFrame) + 1);
+            Debug.Log("Max frame:" + Math.Floor(maxFrame));
+            Debug.Log("Counting frame:" + frame);
             yield return null;
         }
 
+        Debug.Log("End anim");
         StopAllCoroutines();
         EndAttack?.Invoke();
     }
@@ -121,6 +125,8 @@ public class FrameActionManager : MonoBehaviour
             {
                 // Executa a ação passada como parâmetro
                 performAction?.Invoke();
+                Debug.Log("Action");
+                yield break;
             }
 
             yield return null;

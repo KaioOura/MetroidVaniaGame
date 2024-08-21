@@ -16,7 +16,7 @@ public class FootCollider : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        FootRadius = 0.3f;
+        //FootRadius = 0.3f;
     }
 
     // Update is called once per frame

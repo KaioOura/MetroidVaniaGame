@@ -7,6 +7,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D _rb;
+    [SerializeField] private CapsuleCollider2D _capsuleCollider2D;
     [SerializeField] private MovementData _movementData;
     [SerializeField] private MovementData _wallJumpMovementData;
 
@@ -19,6 +20,9 @@ public class Movement : MonoBehaviour
     private float _speed;
 
     private float _movementSpeedMultiplier = 0.1f;
+    private Vector2 _colliderBoundsCenter;
+    private Vector2 _colliderBoundsSize;
+
     private Vector2 _jumpForceMultiplier;
 
     public Rigidbody2D RB => _rb;
@@ -30,6 +34,8 @@ public class Movement : MonoBehaviour
     void Start()
     {
         UpdateMovementModifiers(_movementData);
+        _colliderBoundsCenter = _capsuleCollider2D.offset;
+        _colliderBoundsSize = _capsuleCollider2D.size;
     }
 
     // Update is called once per frame
@@ -58,7 +64,7 @@ public class Movement : MonoBehaviour
             OnUpdateJumpModifiers?.Invoke(_movementData);
             OnChangeStateChanging.Invoke(CharState.Free);
             _animatorRef.Animator.Play(AnimatorRef.AnimationState.Idle.ToString());
-            FacingHandler(_animatorRef.IsFacingRight() ? false : true);
+            CheckFacing();
         }
 
 
@@ -111,12 +117,9 @@ public class Movement : MonoBehaviour
             _animatorRef.MainTransform.eulerAngles = new Vector2(_animatorRef.MainTransform.eulerAngles.x, 180);
     }
 
-    int IsFacingRight()
+    public void CheckFacing()
     {
-        if (_animatorRef.IsFacingRight())
-            return 1;
-        else
-            return -1;
+        FacingHandler(_animatorRef.IsFacingRight() ? false : true);
     }
 
     bool CancelWallJump()
@@ -162,6 +165,20 @@ public class Movement : MonoBehaviour
 
 
         _rb.AddForce(new Vector2(force.x * i, force.y), ForceMode2D.Impulse);
+    }
+
+    public void UpdateColliderSize(Vector3 center, Vector3 size)
+    {
+        if (size == Vector3.zero)
+        {
+            _capsuleCollider2D.size = _colliderBoundsSize;
+            _capsuleCollider2D.offset = _colliderBoundsCenter;
+            return;
+        }
+
+        _capsuleCollider2D.size = size;
+        _capsuleCollider2D.offset = center;
+            
     }
 
     public void IsOnGroundUpdate(bool isGround)

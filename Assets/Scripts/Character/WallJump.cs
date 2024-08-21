@@ -24,6 +24,7 @@ public class WallJump : MonoBehaviour
 
     public event Action<MovementData> OnUpdateMovementSettings;
     public event Action<ActionData, Action> OnRequestStateChanging;
+    public event Action OnWallSlidePerformed;
 
     public void Init(CharacterState characterState)
     {
@@ -62,6 +63,7 @@ public class WallJump : MonoBehaviour
         OnUpdateMovementSettings?.Invoke(_wallSlideMovementData);
         OnRequestPhysicsChanging.Invoke(_wallSlideActionData.PhysicsOptions);
         OnRequestStateChanging.Invoke(_wallSlideActionData, null);
+        OnWallSlidePerformed?.Invoke();
     }
 
     bool CanCheckWallSlide()
@@ -86,11 +88,11 @@ public class WallJump : MonoBehaviour
         _isOnGround = IsOnGround;
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        bool ledgeFound = Physics2D.Raycast(_wallCheckTransform.position, transform.parent.right, 1, _wallJumpData.WallCheckLayerMask);
-        Gizmos.DrawRay(_wallCheckTransform.position, transform.parent.right * _wallJumpData.CheckDistance);
-        Gizmos.DrawRay(new Vector2(_wallCheckTransform.position.x, _wallCheckTransform.position.y + _wallJumpData.OffSetYEmptySpace), transform.parent.right * _wallJumpData.CheckDistance);
-    }
+    // void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.yellow;
+    //     bool ledgeFound = Physics2D.Raycast(_wallCheckTransform.position, transform.parent.right, 1, _wallJumpData.WallCheckLayerMask);
+    //     Gizmos.DrawRay(_wallCheckTransform.position, transform.parent.right * _wallJumpData.CheckDistance);
+    //     Gizmos.DrawRay(new Vector2(_wallCheckTransform.position.x, _wallCheckTransform.position.y + _wallJumpData.OffSetYEmptySpace), transform.parent.right * _wallJumpData.CheckDistance);
+    // }
 }
