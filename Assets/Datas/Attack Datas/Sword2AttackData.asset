@@ -30,7 +30,14 @@ MonoBehaviour:
   _frameActionVFXs: []
   _colliderIndex: 0
   _frameActionHitboxes:
-  - ActionInterval: {x: 5, y: 5}
+  - ActionInterval: {x: 7, y: 7}
+    ColliderInfos:
+      _colliderTypes: 0
+      _isActive: 1
+      _pos: {x: 0.0048, y: 1.1917}
+      _rot: 66.09735
+      _scale: {x: 0.872415, y: 2.3909402}
+  - ActionInterval: {x: 18, y: 18}
     ColliderInfos:
       _colliderTypes: 0
       _isActive: 0

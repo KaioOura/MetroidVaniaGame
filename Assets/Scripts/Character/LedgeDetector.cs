@@ -19,6 +19,7 @@ public class LedgeDetector : MonoBehaviour
     public event Action<CharState> OnChangeStateChanging;
     public Action<PhysicsOptions> OnRequestPhysicsChanging;
     public event Action<ActionData, Action> OnLedgeHangPerformed;
+    public event Action OnLedgePerformedCallback;	
 
 
     public void Init(CharacterState characterState, Rigidbody2D rb)
@@ -62,6 +63,7 @@ public class LedgeDetector : MonoBehaviour
         OnChangeStateChanging?.Invoke(CharState.LedgeClimbing);
         OnLedgeHangPerformed?.Invoke(_ledgeActionData, null);
         OnRequestPhysicsChanging?.Invoke(_ledgeActionData.PhysicsOptions);
+        OnLedgePerformedCallback?.Invoke();
 
         transform.parent.position = _hangPos;
     }

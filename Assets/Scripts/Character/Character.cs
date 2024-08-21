@@ -19,6 +19,7 @@ public class Character : MonoBehaviour
     [SerializeField] private UpgradeManager _upgradeManager;
 
     private CharacterState _characterState;
+    private CharState _lastState;
 
     private event Action OnJumpPerformed;
 
@@ -107,6 +108,8 @@ public class Character : MonoBehaviour
         _ledgeDetector.Init(_characterState, _movement.RB);
         _ledgeDetector.OnChangeStateChanging += ChangeCurrentState;
         _ledgeDetector.OnLedgeHangPerformed += _frameActionManager.OnActionReceived;
+        _ledgeDetector.OnLedgePerformedCallback += _dash.OnDashCountReset;
+        
         _ledgeDetector.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
         OnJumpPerformed += _ledgeDetector.JumpPerformed;
         OnJumpPerformed += _wallSlide.JumpPerformed;
@@ -163,7 +166,11 @@ public class Character : MonoBehaviour
 
     public void ChangeCurrentState(CharState characterState)
     {
+        _lastState = _characterState.CharState;
         _characterState.CharState = characterState;
+
+        if (_lastState is CharState.Attack or CharState.AirAttack)
+            _colliderCreator.ResetColliders();
 
         switch (_characterState.CharState)
         {
