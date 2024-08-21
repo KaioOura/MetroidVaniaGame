@@ -121,6 +121,7 @@ public class Character : MonoBehaviour
         _wallSlide.OnUpdateMovementSettings += _jump.UpdateJumpModifiers;
         _wallSlide.OnRequestStateChanging += _frameActionManager.OnActionReceived;
         _wallSlide.OnWallSlidePerformed += _jump.ResetJumpCount;
+        _wallSlide.OnWallSlidePerformed += _dash.OnDashCountReset;
     }
 
     void InitDash()

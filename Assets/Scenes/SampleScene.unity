@@ -841,6 +841,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad555bd56d6227a4f88f38e814ecaaae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _dashCooldown: 0.5
   _dashData: {fileID: 11400000, guid: df7677a0b4f163b44bbd4b46d994f7e6, type: 2}
   _dashGroundCenter: {x: -0.02337702, y: -0.2864951}
   _dashGroundSize: {x: 0.453246, y: 0.6257145}
@@ -1989,12 +1990,12 @@ Transform:
   - {fileID: 383017235}
   - {fileID: 1439606793}
   - {fileID: 311081534}
+  - {fileID: 326844036}
   - {fileID: 625791674}
   - {fileID: 95129238}
   - {fileID: 425532392}
   - {fileID: 220662565}
   - {fileID: 847965563}
-  - {fileID: 326844036}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1225023782

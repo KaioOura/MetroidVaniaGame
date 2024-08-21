@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a09f48a379673b14fa0cdbb89a5a8582, type: 3}
   m_Name: StandardMovementData
   m_EditorClassIdentifier: 
-  _speed: 200
+  _speed: 250
   _speedMultiplier: 0
   _jumpForce: 8
   _jumpHorizontalForce: 0

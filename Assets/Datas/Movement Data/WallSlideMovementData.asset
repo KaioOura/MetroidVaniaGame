@@ -12,9 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a09f48a379673b14fa0cdbb89a5a8582, type: 3}
   m_Name: WallSlideMovementData
   m_EditorClassIdentifier: 
-  _speed: 200
+  _speed: 250
+  _speedMultiplier: 0
   _jumpForce: 8
+  _jumpHorizontalForce: 0
   _jumpCutForce: 2
   _fallAdditionalForce: 1.2
   _maxFallVelocity: 2
   _maxTimeGettingJumpForce: 0.21
+  _maxTimeWallJump: 0
+  _maxHorizontalVelocity: 0
+  _physicsOptions:
+    _stopHorizontalVelocity: 0
+    _stopVerticalVelocity: 0
+    _updateRigidBodyContraints: 0
+    _rigidBodyConstraints: 0

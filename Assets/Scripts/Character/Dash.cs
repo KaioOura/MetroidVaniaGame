@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Dash : MonoBehaviour
 {
+    [SerializeField] private float _dashCooldown = 1;
     [SerializeField] private DashData _dashData;
     [SerializeField] private Vector2 _dashGroundCenter;
     [SerializeField] private Vector2 _dashGroundSize;
@@ -14,6 +15,8 @@ public class Dash : MonoBehaviour
 
     private CharacterState _characterState;
     private bool _isOnGround;
+    private float _coolDownTracker;
+    private int _dashCounter = 1;
 
     public event Action<CharState> OnRequestStateChaging;
     public event Action<ActionData, Action> OnDashPerformed;
@@ -68,16 +71,32 @@ public class Dash : MonoBehaviour
 
         //OnRequestStateChaging?.Invoke(actionData.CharacterStateToSet);
         OnDashPerformed?.Invoke(actionData, OnEndDash);
+        _coolDownTracker = Time.time;
+        _dashCounter = 0;
     }
 
     bool CanDash()
     {
-        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.WallJumping or CharState.WallSliding;
+        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.WallJumping or CharState.WallSliding
+        && Time.time >= _coolDownTracker + _dashCooldown
+        && HasDashCount();
     }
 
     public void IsOnGroundUpdate(bool IsOnGround)
     {
         _isOnGround = IsOnGround;
+        if (_isOnGround)
+            OnDashCountReset();
+    }
+
+    public void OnDashCountReset()
+    {
+        _dashCounter = 1;
+    }
+
+    bool HasDashCount()
+    {
+        return _dashCounter == 1;
     }
 
     void OnEndDash()
