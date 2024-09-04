@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a58bafbe4f052b4dbf2f4fd2021d85f, type: 3}
   m_Name: WallJumpActionData
   m_EditorClassIdentifier: 
-  _animationClip: {fileID: 7400000, guid: 54368b5ec3294df4791b5ff6b33d63bd, type: 2}
+  _animationClip: {fileID: 7400000, guid: 2e6ed4592094f8044ba650a3c3e67a73, type: 2}
   _transitionDuration: 0
   _animationState: 5
   _characterStateToSet: 7
+  _overridePhysics: 0
   _physicsOptions:
     _stopHorizontalVelocity: 0
     _stopVerticalVelocity: 0

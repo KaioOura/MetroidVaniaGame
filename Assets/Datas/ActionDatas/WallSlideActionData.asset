@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a58bafbe4f052b4dbf2f4fd2021d85f, type: 3}
   m_Name: WallSlideActionData
   m_EditorClassIdentifier: 
-  _animationClip: {fileID: 7400000, guid: bb40fda115c262a4b8bbf3b64437c0f1, type: 2}
+  _animationClip: {fileID: 7400000, guid: b0537fd9a5038db45bac532fe1910d19, type: 2}
   _transitionDuration: 0
   _animationState: 3
   _characterStateToSet: 6

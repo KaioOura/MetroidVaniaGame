@@ -28,12 +28,36 @@ public class FrameActionManager : MonoBehaviour
     public event Action<Vector2, bool> OnApplyForce;
     public event Action<PhysicsOptions> OnOverridePhysics;
     public event Action<ColliderInfos> OnRequestCollider;
+    public event Action OnRequestArrowShoot;
     public Action<CharState> OnRequestStateChanging;
 
 
     public void Init(AnimatorRef animatorRef)
     {
         _animatorRef = animatorRef;
+        OverrideAnimations();
+    }
+
+    void OverrideAnimations()
+    {
+        _animatorRef.Animator.runtimeAnimatorController = _animatorRef.AnimatorOverrideController;
+        var overrides = new AnimationClipOverrides(_animatorRef.AnimatorOverrideController.overridesCount);
+        _animatorRef.AnimatorOverrideController.GetOverrides(overrides);
+
+        for (int y = 0; y < overrides.Count; y++)
+        {
+            for (int i = 0; i < Enum.GetNames(typeof(AnimatorRef.AnimationState)).Length; i++)
+            {
+                var stateName = (AnimatorRef.AnimationState)i;
+                string name = stateName.ToString();
+                string key = GetCleanKey(overrides[y].Key.ToString());
+
+                if (key == name)
+                    overrides[stateName.ToString()] = overrides[y].Value;
+            }
+        }
+
+        _animatorRef.AnimatorOverrideController.ApplyOverrides(overrides);
     }
 
     public void OnActionReceived(ActionData ActionData, Action EndAttack)
@@ -59,6 +83,8 @@ public class FrameActionManager : MonoBehaviour
         float normalizedTransitionTime = 0;
         CurrentFrame = 0;
 
+        Debug.Log(CurrentFrame);
+
         if (transitionDurantion > 0)
         {
             yield return new WaitUntil(() => _animatorRef.Animator.IsInTransition(0));
@@ -79,6 +105,7 @@ public class FrameActionManager : MonoBehaviour
         {
             float normalizedTime = _animatorRef.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
             CurrentFrame = frame = (int)(normalizedTime / (1 / maxFrame) + 1);
+            Debug.Log(CurrentFrame);
             //Debug.Log("Max frame:" + Math.Floor(maxFrame));
             //Debug.Log("Counting frame:" + frame);
             yield return null;
@@ -130,6 +157,15 @@ public class FrameActionManager : MonoBehaviour
                 }
             }
         }
+
+        RangedAttackData rangedAttackData = ActionData as RangedAttackData;
+
+        if (rangedAttackData != null)
+        {
+            IEnumerator routine = FrameActionRoutine(rangedAttackData.ShotFrame.ActionInterval, () => OnRequestArrowShoot?.Invoke());
+            //Debug.Log(action.ActionInterval);
+            StartCoroutine(routine);
+        }
     }
 
 
@@ -141,11 +177,43 @@ public class FrameActionManager : MonoBehaviour
             {
                 // Executa a ação passada como parâmetro
                 performAction?.Invoke();
-                Debug.Log("Action");
+                //Debug.Log("Action");
                 yield break;
             }
 
             yield return null;
+        }
+    }
+
+    string GetCleanKey(string key)
+    {
+        int index = key.IndexOf('(');
+        if (index >= 0)
+        {
+            key = key.Substring(0, index);
+        }
+        int index1 = key.IndexOf(' ');
+        if (index >= 0)
+        {
+            key = key.Substring(0, index1);
+        }
+
+        return key;
+    }
+}
+
+public class AnimationClipOverrides : List<KeyValuePair<AnimationClip, AnimationClip>>
+{
+    public AnimationClipOverrides(int capacity) : base(capacity) { }
+
+    public AnimationClip this[string name]
+    {
+        get { return this.Find(x => x.Key.name.Equals(name)).Value; }
+        set
+        {
+            int index = this.FindIndex(x => x.Key.name.Equals(name));
+            if (index != -1)
+                this[index] = new KeyValuePair<AnimationClip, AnimationClip>(this[index].Key, value);
         }
     }
 }

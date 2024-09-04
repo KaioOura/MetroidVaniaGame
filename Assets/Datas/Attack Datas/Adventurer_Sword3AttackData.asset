@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e9a2daf839fffa438d62d7efe7aaa34, type: 3}
+  m_Name: Adventurer_Sword3AttackData
+  m_EditorClassIdentifier: 
+  _animationClip: {fileID: 7400000, guid: 56a55f919be02df478a244587e3c10df, type: 2}
+  _transitionDuration: 0
+  _animationState: 1
+  _characterStateToSet: 4
+  _overridePhysics: 0
+  _physicsOptions:
+    _stopHorizontalVelocity: 1
+    _stopVerticalVelocity: 1
+    _updateRigidBodyContraints: 0
+    _rigidBodyConstraints: 0
+  _upgradeNeeded: 2
+  _frameActionForces:
+  - ActionInterval: {x: 2, y: 2}
+    _localForce: 1
+    _force: {x: 0.7, y: 0}
+  _frameActionVFXs: []
+  _colliderIndex: 0
+  _frameActionHitboxes:
+  - ActionInterval: {x: 10, y: 10}
+    ColliderInfos:
+      _colliderTypes: 0
+      _isActive: 1
+      _pos: {x: 1.0264, y: 0.6653}
+      _rot: 0
+      _scale: {x: 1.3809581, y: 1.3380044}
+  - ActionInterval: {x: 14, y: 14}
+    ColliderInfos:
+      _colliderTypes: 0
+      _isActive: 0
+      _pos: {x: 0, y: 0}
+      _rot: 0
+      _scale: {x: 0, y: 0}
+  _comboConnectionRange: {x: 35, y: 40}
+  _damage: 0

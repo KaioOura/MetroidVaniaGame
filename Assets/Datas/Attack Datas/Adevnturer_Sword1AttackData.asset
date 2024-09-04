@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e9a2daf839fffa438d62d7efe7aaa34, type: 3}
+  m_Name: Adevnturer_Sword1AttackData
+  m_EditorClassIdentifier: 
+  _animationClip: {fileID: 7400000, guid: 873241f9b883fdb44a746c728478d9d1, type: 2}
+  _transitionDuration: 0.2
+  _animationState: 1
+  _characterStateToSet: 4
+  _overridePhysics: 1
+  _physicsOptions:
+    _stopHorizontalVelocity: 1
+    _stopVerticalVelocity: 1
+    _updateRigidBodyContraints: 0
+    _rigidBodyConstraints: 0
+  _upgradeNeeded: 0
+  _frameActionForces:
+  - ActionInterval: {x: 17, y: 17}
+    _localForce: 1
+    _force: {x: 0.5, y: 0}
+  _frameActionVFXs: []
+  _colliderIndex: 0
+  _frameActionHitboxes:
+  - ActionInterval: {x: 7, y: 7}
+    ColliderInfos:
+      _colliderTypes: 0
+      _isActive: 1
+      _pos: {x: 0.836, y: 0.981}
+      _rot: 29.025309
+      _scale: {x: 0.9518986, y: 1.3057976}
+  - ActionInterval: {x: 12, y: 12}
+    ColliderInfos:
+      _colliderTypes: 0
+      _isActive: 0
+      _pos: {x: 0, y: 0}
+      _rot: 0
+      _scale: {x: 0, y: 0}
+  _comboConnectionRange: {x: 21, y: 25}
+  _damage: 0

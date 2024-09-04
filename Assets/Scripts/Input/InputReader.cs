@@ -10,6 +10,7 @@ public class InputReader : MonoBehaviour
     public Action<Vector2> OnMoveInput;
     public Action<bool> OnJumpInput;
     public Action<bool> OnAttackInput;
+    public Action<bool> OnRangedAttackInput;
     public Action<bool> OnDashInput;
 
     void Awake()
@@ -20,13 +21,13 @@ public class InputReader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void OnMove(InputValue ctx)
@@ -42,6 +43,11 @@ public class InputReader : MonoBehaviour
     public void OnAttack(InputValue ctx)
     {
         OnAttackInput?.Invoke(ctx.Get<float>() == 1);
+    }
+
+    public void OnRangedAttack(InputValue ctx)
+    {
+        OnRangedAttackInput?.Invoke(ctx.Get<float>() == 1);
     }
 
     public void OnDash(InputValue ctx)

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a58bafbe4f052b4dbf2f4fd2021d85f, type: 3}
   m_Name: DashAirActionData
   m_EditorClassIdentifier: 
-  _animationClip: {fileID: 7400000, guid: 70c521f3e788aa0419fe63962c62196e, type: 2}
+  _animationClip: {fileID: 7400000, guid: 6df895068df32834083198599b008ea5, type: 2}
   _transitionDuration: 0
   _animationState: 6
   _characterStateToSet: 9

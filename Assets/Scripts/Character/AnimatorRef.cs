@@ -38,7 +38,11 @@ public class AnimatorRef : MonoBehaviour
     }
 
     public Animator Animator => _animator;
-    public AnimatorOverrideController AnimatorOverrideController => _animatorOverrideController;
+    public AnimatorOverrideController AnimatorOverrideController
+    {
+        get => _animatorOverrideController;
+        set => _animatorOverrideController = value;
+    }
 
     void Awake()
     {

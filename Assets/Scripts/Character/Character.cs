@@ -12,6 +12,7 @@ public class Character : MonoBehaviour
     [SerializeField] private WallJump _wallSlide;
     [SerializeField] private Dash _dash; 
     [SerializeField] private Combat _combat;
+    [SerializeField] private BowQuiver _bowQuiver;
     [SerializeField] private ColliderCreator _colliderCreator;
     [SerializeField] private FrameActionManager _frameActionManager;
     [SerializeField] private InputReader _inputReader;
@@ -35,6 +36,7 @@ public class Character : MonoBehaviour
         InitMovement();
         InitJump();
         InitCombat();
+        InitBowQuiver();
         InitLedgeDetector();
         InitWallSlide();
         InitDash();
@@ -80,6 +82,7 @@ public class Character : MonoBehaviour
         _inputReader.OnMoveInput += _movement.OnMoveInput;
         _inputReader.OnJumpInput += _jump.OnJumpInput;
         _inputReader.OnAttackInput += _combat.OnAttackInput;
+        _inputReader.OnRangedAttackInput += _combat.OnRangedAttackInput;
         _inputReader.OnDashInput += _dash.OnDashInput;
     }
 
@@ -148,6 +151,11 @@ public class Character : MonoBehaviour
         _combat.OnRequestStateChanging += ChangeCurrentState;
         //_combat.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
         _combat.OnAttackPerformed += _frameActionManager.OnActionReceived;
+    }
+
+    void InitBowQuiver()
+    {
+        _frameActionManager.OnRequestArrowShoot += _bowQuiver.OnShootArrowRequested;
     }
 
     void InitFrameActionManager()

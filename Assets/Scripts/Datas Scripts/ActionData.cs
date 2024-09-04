@@ -8,6 +8,7 @@ public class ActionData : ScriptableObject
 {
     [Header("Action Data")]
     [SerializeField] protected AnimationClip _animationClip;
+    [SerializeField] protected Vector2 _comboConnectionRange;
     [SerializeField] protected float _transitionDuration;
     [SerializeField] protected AnimatorRef.AnimationState _animationState;
     [SerializeField] protected CharState _characterStateToSet;
@@ -21,6 +22,7 @@ public class ActionData : ScriptableObject
 
 
     public AnimationClip AnimationClip => _animationClip;
+    public Vector2 ComboConnectionRange => _comboConnectionRange;
     public float TransitionDuration => _transitionDuration;
     public AnimatorRef.AnimationState AnimationState => _animationState;
 
@@ -66,6 +68,7 @@ public class FrameActionForces : FrameAction
 
 }
 
+[Serializable]
 public class FrameAction
 {
     public Vector2 ActionInterval;

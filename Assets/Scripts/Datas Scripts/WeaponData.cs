@@ -6,12 +6,12 @@ using UnityEngine;
 public class WeaponData : ScriptableObject
 {
     [SerializeField] private WeaponType _weaponType;
-    [SerializeField] private AttackData[] _attackDatas;
-    [SerializeField] private AttackData[] _airAttackDatas;
+    [SerializeField] private ActionData[] _actionAttackDatas;
+    [SerializeField] private ActionData[] _actionAirAttackDatas;
 
     public WeaponType WeaponType => _weaponType;
-    public AttackData[] AttackDatas => _attackDatas;
-    public AttackData[] AirAttackDatas => _airAttackDatas;
+    public ActionData[] ActionAttackDatas => _actionAttackDatas;
+    public ActionData[] ActionAirAttackDatas => _actionAirAttackDatas;
 
 }
 

@@ -10,10 +10,13 @@ public class DamageInfos
     [SerializeField] private bool _applyStagger;
     [SerializeField] private bool _localForces;
     [SerializeField] private Vector2 _forces;
+    [SerializeField] private DamageType _damageType;
+
 
     public float Damage => _damage;
     public bool ApplyStagger => _applyStagger;
     public bool LocalForces => _localForces;
     public Vector2 Forces => _forces;
+    public DamageType damageType => _damageType;
 
 }

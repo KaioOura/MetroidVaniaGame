@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fa328796a2336f4087b83ecc99f9e28, type: 3}
+  m_Name: Adventurer_BowData
+  m_EditorClassIdentifier: 
+  _weaponType: 1
+  _actionAttackDatas:
+  - {fileID: 11400000, guid: b78f0882a68a45348a53a1c0c610cd4c, type: 2}
+  _actionAirAttackDatas:
+  - {fileID: 11400000, guid: b78f0882a68a45348a53a1c0c610cd4c, type: 2}

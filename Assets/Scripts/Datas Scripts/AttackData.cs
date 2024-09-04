@@ -10,13 +10,7 @@ public class AttackData : ActionData
     [Header("Attack Data")]
     [SerializeField] private int _colliderIndex;
     [SerializeField] protected FrameActionHitBox[] _frameActionHitboxes;
-    [SerializeField] protected Vector2 _comboConnectionRange;
     [SerializeField] protected float _damage;
-
-
-
-
-    public Vector2 ComboConnectionRange => _comboConnectionRange;
     public FrameActionHitBox[] FrameActionHitboxes => _frameActionHitboxes;
 
 

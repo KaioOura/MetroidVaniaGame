@@ -6,6 +6,7 @@ using UnityEngine;
 public class Combat : MonoBehaviour
 {
     [SerializeField] private WeaponData _currentWeapon;
+    [SerializeField] private WeaponData _rangedWeapon;
     [SerializeField] private FootCollider _footCollider;
     [SerializeField] private FrameActionManager _frameActionManager;
 
@@ -15,11 +16,11 @@ public class Combat : MonoBehaviour
     private bool _isAttacking;
     private int _attackIndex;
 
-    private AttackData _currentAttackData;
-    private AttackData[] _currentAttackDataList;
+    private ActionData _currentActionData;
+    private ActionData[] _currentAttackDataList;
 
 
-    public Action<AttackData, Action> OnAttackPerformed;
+    public Action<ActionData, Action> OnAttackPerformed;
     public Action<CharState> OnRequestStateChanging;
     public Action<PhysicsOptions> OnRequestPhysicsChanging;
 
@@ -32,15 +33,20 @@ public class Combat : MonoBehaviour
     public void OnAttackInput(bool pressing)
     {
         if (pressing)
-            InputBuffer.Add(CheckAttack);
+            InputBuffer.Add(() => CheckAttack(isMelee: true));
+    }
+    public void OnRangedAttackInput(bool pressing)
+    {
+        if (pressing)
+            InputBuffer.Add(() => CheckAttack(isMelee: false));
     }
 
-    void CheckAttack()
-    {   
-        if (!CanAttack())
+    void CheckAttack(bool isMelee)
+    {
+        if (!CanAttack(isMelee))
             return;
 
-        AttackData attackData = GetAttackData();
+        ActionData attackData = GetAttackData(isMelee);
 
         if (_isAttacking)
         {
@@ -56,43 +62,52 @@ public class Combat : MonoBehaviour
         PerformAttack(attackData);
     }
 
-    bool CanAttack()
+    bool CanAttack(bool isMelee)
     {
-        return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.Attack or CharState.AirAttack;
+        if (isMelee)
+            return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.Attack or CharState.AirAttack;
+        else
+            return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.Attack or CharState.AirAttack;
     }
 
-    AttackData GetAttackData()
+    ActionData GetAttackData(bool isMelee)
     {
-        _currentAttackDataList = _footCollider.IsOnGround ? _currentWeapon.AttackDatas : _currentWeapon.AirAttackDatas;
+
+        if (isMelee)
+            _currentAttackDataList = _footCollider.IsOnGround ? _currentWeapon.ActionAttackDatas : _currentWeapon.ActionAirAttackDatas;
+        else
+            _currentAttackDataList = _footCollider.IsOnGround ? _rangedWeapon.ActionAttackDatas : _rangedWeapon.ActionAirAttackDatas;
 
         if (!_isAttacking)
             return _currentAttackDataList[0];
-    
+
         return _currentAttackDataList[_attackIndex];
     }
 
-    bool CheckComboConnection(AttackData nextAttackData)
+    bool CheckComboConnection(ActionData nextAttackData)
     {
-        if (_currentAttackData == null)
+        if (_currentActionData == null)
             return false;
 
         if (!_upgradeManager.HasUpgrade(nextAttackData.UpgradeNeeded))
             return false;
 
-        return CurrentFrame >= _currentAttackData.ComboConnectionRange.x && 
-        CurrentFrame <= _currentAttackData.ComboConnectionRange.y;
+        return CurrentFrame >= _currentActionData.ComboConnectionRange.x &&
+        CurrentFrame <= _currentActionData.ComboConnectionRange.y;
     }
 
-    void PerformAttack(AttackData attackData)
+    void PerformAttack(ActionData actionData)
     {
         _attackIndex = _attackIndex >= _currentAttackDataList.Length - 1 ? 0 : _attackIndex + 1;
 
-        OnRequestStateChanging?.Invoke(attackData.CharacterStateToSet);
-        OnRequestPhysicsChanging?.Invoke(attackData.PhysicsOptions);
+        OnRequestStateChanging?.Invoke(actionData.CharacterStateToSet);
+        OnRequestPhysicsChanging?.Invoke(actionData.PhysicsOptions);
 
         _isAttacking = true;
-        _currentAttackData = attackData;
-        OnAttackPerformed?.Invoke(attackData, OnEndAttack);
+
+
+        _currentActionData = actionData;
+        OnAttackPerformed?.Invoke(actionData, OnEndAttack);
     }
 
     public void UpdateCurrentFrame(int frame)
@@ -103,6 +118,6 @@ public class Combat : MonoBehaviour
     {
         _isAttacking = false;
         _attackIndex = 0;
-        _currentAttackData = null;
+        _currentActionData = null;
     }
 }
