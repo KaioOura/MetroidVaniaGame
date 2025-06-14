@@ -71,8 +71,8 @@ public class Movement : MonoBehaviour
         if (CanWalk())
             ApplyMovementVelocity();
 
-        _animatorRef.Animator.SetFloat(AnimatorRef.MoveParam, Mathf.Abs(_rb.velocity.x));
-        _animatorRef.Animator.SetFloat(AnimatorRef.VelYParam, _rb.velocity.y);
+        _animatorRef.Animator.SetFloat(AnimatorRef.MoveParam, Mathf.Abs(_rb.linearVelocity.x));
+        _animatorRef.Animator.SetFloat(AnimatorRef.VelYParam, _rb.linearVelocity.y);
         _animatorRef.Animator.SetBool(AnimatorRef.OnGroundParam, _isOnGround);
     }
 
@@ -87,13 +87,13 @@ public class Movement : MonoBehaviour
             _rb.AddForce(new Vector2(Move.x * (_speed * Time.fixedDeltaTime) * _movementSpeedMultiplier, 0));
 
 
-            float velX = Mathf.Clamp(_rb.velocity.x, -_wallJumpMovementData.MaxHorizontalVelocity, _wallJumpMovementData.MaxHorizontalVelocity);
+            float velX = Mathf.Clamp(_rb.linearVelocity.x, -_wallJumpMovementData.MaxHorizontalVelocity, _wallJumpMovementData.MaxHorizontalVelocity);
 
-            _rb.velocity = new Vector2(velX, _rb.velocity.y);
+            _rb.linearVelocity = new Vector2(velX, _rb.linearVelocity.y);
         }
         else
         {
-            _rb.velocity = new Vector2(Move.x * (_speed * Time.fixedDeltaTime), _rb.velocity.y);
+            _rb.linearVelocity = new Vector2(Move.x * (_speed * Time.fixedDeltaTime), _rb.linearVelocity.y);
         }
 
     }
@@ -148,10 +148,10 @@ public class Movement : MonoBehaviour
     public void OnReceivedPhyscisChanging(PhysicsOptions physicsOptions)
     {
         if (physicsOptions.StopHorizontalVelocity)
-            _rb.velocity = new Vector2(0, _rb.velocity.y);
+            _rb.linearVelocity = new Vector2(0, _rb.linearVelocity.y);
 
         if (physicsOptions.StopVerticalVelocity)
-            _rb.velocity = new Vector2(_rb.velocity.x, 0);
+            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, 0);
 
         if (physicsOptions.UpdateRigidBodyContraints)
             _rb.constraints = physicsOptions.RigidbodyConstraints;

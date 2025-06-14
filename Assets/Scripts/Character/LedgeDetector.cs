@@ -77,7 +77,7 @@ public class LedgeDetector : MonoBehaviour
 
     bool VelCheck() //Used to check if player Y when dashing.
     {
-        return _characterState.CharState is CharState.Dashing ? true : Mathf.Abs(_rb.velocity.y) > 0.1f;
+        return _characterState.CharState is CharState.Dashing ? true : Mathf.Abs(_rb.linearVelocity.y) > 0.1f;
     }
 
     public void JumpPerformed()

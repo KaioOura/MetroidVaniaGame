@@ -52,14 +52,14 @@ public class Jump : MonoBehaviour
 
     void HandleFalling()
     {
-        if (_rb.velocity.y > 0 && Time.time >= _pressingJumpTimeTracker)
+        if (_rb.linearVelocity.y > 0 && Time.time >= _pressingJumpTimeTracker)
         {
-            _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y / _jumpCutForce);
+            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.y / _jumpCutForce);
         }
 
-        if (_rb.velocity.y < 0)
+        if (_rb.linearVelocity.y < 0)
         {
-            _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y <= -_maxFallVelocity ? -_maxFallVelocity : _rb.velocity.y * _fallAdditionalForce);
+            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.y <= -_maxFallVelocity ? -_maxFallVelocity : _rb.linearVelocity.y * _fallAdditionalForce);
         }
     }
 
@@ -73,8 +73,8 @@ public class Jump : MonoBehaviour
         if (!isPressing)
         {
             //Cortar impulso
-            if (_rb.velocity.y > 0 && _currentState.CharState is not CharState.WallJumping)
-                _rb.velocity = new Vector2(_rb.velocity.x, _rb.velocity.y / _jumpCutForce);
+            if (_rb.linearVelocity.y > 0 && _currentState.CharState is not CharState.WallJumping)
+                _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.y / _jumpCutForce);
 
         }
         else

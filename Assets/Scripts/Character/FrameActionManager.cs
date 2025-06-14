@@ -105,7 +105,7 @@ public class FrameActionManager : MonoBehaviour
         {
             float normalizedTime = _animatorRef.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
             CurrentFrame = frame = (int)(normalizedTime / (1 / maxFrame) + 1);
-            Debug.Log(CurrentFrame);
+            //Debug.Log(CurrentFrame);
             //Debug.Log("Max frame:" + Math.Floor(maxFrame));
             //Debug.Log("Counting frame:" + frame);
             yield return null;
