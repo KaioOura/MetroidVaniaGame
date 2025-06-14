@@ -12,10 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fa328796a2336f4087b83ecc99f9e28, type: 3}
   m_Name: SwordData
   m_EditorClassIdentifier: 
+  itemName: WeaponBase
+  itemType: 1
+  itemIcon: {fileID: 0}
+  maxStack: 0
+  isStackable: 0
+  buyValue: 0
+  sellValue: 0
+  description: 
   _weaponType: 0
-  _attackDatas:
-  - {fileID: 11400000, guid: 909a4f72e02a7224f992375ac98a6dd7, type: 2}
-  - {fileID: 11400000, guid: 8cd129c22114c8a40be408488404489e, type: 2}
-  - {fileID: 11400000, guid: c8cd928eda35d1444835a7ff7589d164, type: 2}
-  _airAttackDatas:
-  - {fileID: 11400000, guid: f544c073d13a8f641b1931c656a784ba, type: 2}
+  _actionAttackDatas: []
+  _actionAirAttackDatas: []

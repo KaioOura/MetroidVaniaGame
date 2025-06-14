@@ -2,15 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Character : MonoBehaviour
 {
+    public InventoryService InventoryService => inventoryService;
+    public CombatInventoryService CombatInventoryService => combatInventoryService;
+    
     [SerializeField] private Movement _movement;
     [SerializeField] private FootCollider _footCollider;
     [SerializeField] private LedgeDetector _ledgeDetector;
     [SerializeField] private Jump _jump;
     [SerializeField] private WallJump _wallSlide;
-    [SerializeField] private Dash _dash; 
+    [SerializeField] private Dash _dash;
     [SerializeField] private Combat _combat;
     [SerializeField] private BowQuiver _bowQuiver;
     [SerializeField] private ColliderCreator _colliderCreator;
@@ -18,9 +22,14 @@ public class Character : MonoBehaviour
     [SerializeField] private InputReader _inputReader;
     [SerializeField] private AnimatorRef _animatorRef;
     [SerializeField] private UpgradeManager _upgradeManager;
+    [SerializeField] private Interactor _interactor;
+    [SerializeField] private InventoryService inventoryService;
+    [SerializeField] private CombatInventoryService combatInventoryService;
 
     private CharacterState _characterState;
     private CharState _lastState;
+    private InventoryItemUseResolver _inventoryItemUseResolver;
+    private CombatItemUseResolver _combatItemUseResolver;
 
     private event Action OnJumpPerformed;
 
@@ -28,9 +37,8 @@ public class Character : MonoBehaviour
     {
         _characterState = new CharacterState();
     }
-
-    // Start is called before the first frame update
-    void Start()
+    
+    public void Initialize()
     {
         InitInput();
         InitMovement();
@@ -41,12 +49,8 @@ public class Character : MonoBehaviour
         InitWallSlide();
         InitDash();
         InitFrameActionManager();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        InitInteractor();
+        InitInventory();
     }
 
     void OnDestroy()
@@ -75,6 +79,10 @@ public class Character : MonoBehaviour
 
         _wallSlide.OnStateChanging -= ChangeCurrentState;
         _wallSlide.OnUpdateMovementSettings -= _movement.UpdateMovementModifiers;
+
+        _inputReader.OnInteractInput -= _interactor.TryInteract;
+
+        inventoryService.OnItemUse -= _inventoryItemUseResolver.HandleItemUsed;
     }
 
     void InitInput()
@@ -112,7 +120,7 @@ public class Character : MonoBehaviour
         _ledgeDetector.OnChangeStateChanging += ChangeCurrentState;
         _ledgeDetector.OnLedgeHangPerformed += _frameActionManager.OnActionReceived;
         _ledgeDetector.OnLedgePerformedCallback += _dash.OnDashCountReset;
-        
+
         _ledgeDetector.OnRequestPhysicsChanging += _movement.OnReceivedPhyscisChanging;
         OnJumpPerformed += _ledgeDetector.JumpPerformed;
         OnJumpPerformed += _wallSlide.JumpPerformed;
@@ -141,7 +149,6 @@ public class Character : MonoBehaviour
         _dash.OnRequestFacingChange += _movement.FacingHandler;
         _dash.OnRequestHitBoxChanging += _movement.UpdateColliderSize;
         _footCollider.OnIsOnGroundUpdate += _dash.IsOnGroundUpdate;
-
     }
 
     void InitCombat()
@@ -163,13 +170,31 @@ public class Character : MonoBehaviour
         _frameActionManager.Init(_animatorRef);
 
         _frameActionManager.OnRequestStateChanging += ChangeCurrentState;
-        
+
         _frameActionManager.OnApplyForce += _movement.ApplyForce;
         _frameActionManager.OnOverridePhysics += _movement.OnReceivedPhyscisChanging;
 
         _frameActionManager.OnFrameUpdate += _combat.UpdateCurrentFrame;
 
         _frameActionManager.OnRequestCollider += _colliderCreator.OnReceivedColliderRequest;
+    }
+
+    void InitInteractor()
+    {
+        _inputReader.OnInteractInput += _interactor.TryInteract;
+    }
+
+    private void InitInventory()
+    {
+        inventoryService.Initialize(21);
+        _inventoryItemUseResolver = new InventoryItemUseResolver();
+        _inventoryItemUseResolver.Initialize(combatInventoryService);
+        inventoryService.OnItemUse += _inventoryItemUseResolver.HandleItemUsed;
+        
+        combatInventoryService.Initialize(5);
+        _combatItemUseResolver = new CombatItemUseResolver();
+        _combatItemUseResolver.Initialize(inventoryService);
+        combatInventoryService.OnItemUse += _combatItemUseResolver.HandleItemUsed;
     }
 
     public void ChangeCurrentState(CharState characterState)
@@ -183,36 +208,33 @@ public class Character : MonoBehaviour
         switch (_characterState.CharState)
         {
             case CharState.Free:
-                {
-                    // _movement.ChangeCurrentMoveType(MovementTypes.Free);
-                    break;
-                }
+            {
+                // _movement.ChangeCurrentMoveType(MovementTypes.Free);
+                break;
+            }
             case CharState.Attack:
-                {
-                    // _movement.ChangeCurrentMoveType(MovementTypes.Restricted);
-                    break;
-                }
+            {
+                // _movement.ChangeCurrentMoveType(MovementTypes.Restricted);
+                break;
+            }
             case CharState.Jumping or CharState.DoubleJumping:
-                {
-                    OnJumpPerformed?.Invoke();
-                    break;
-                }
+            {
+                OnJumpPerformed?.Invoke();
+                break;
+            }
             case CharState.Falling:
-                {   
-                    _movement.UpdateMovementModifiers(null);
-                    break;
-                }
-            
+            {
+                _movement.UpdateMovementModifiers(null);
+                break;
+            }
         }
     }
-
 }
 
 [Serializable]
 public class CharacterState
 {
-    [SerializeField]
-    public CharState CharState;
+    [SerializeField] public CharState CharState;
 }
 
 public enum CharState

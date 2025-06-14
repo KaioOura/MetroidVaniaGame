@@ -12,6 +12,7 @@ public class InputReader : MonoBehaviour
     public Action<bool> OnAttackInput;
     public Action<bool> OnRangedAttackInput;
     public Action<bool> OnDashInput;
+    public Action<bool> OnInteractInput;
 
     void Awake()
     {
@@ -53,5 +54,10 @@ public class InputReader : MonoBehaviour
     public void OnDash(InputValue ctx)
     {
         OnDashInput?.Invoke(ctx.Get<float>() == 1);
+    }
+
+    public void OnInteract(InputValue ctx)
+    {
+        OnInteractInput?.Invoke(ctx.Get<float>() == 1);
     }
 }

@@ -35,6 +35,7 @@ public class Combat : MonoBehaviour
         if (pressing)
             InputBuffer.Add(() => CheckAttack(isMelee: true));
     }
+
     public void OnRangedAttackInput(bool pressing)
     {
         if (pressing)
@@ -65,23 +66,32 @@ public class Combat : MonoBehaviour
     bool CanAttack(bool isMelee)
     {
         if (isMelee)
-            return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.Attack or CharState.AirAttack;
+            return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping
+                or CharState.Falling or CharState.Attack or CharState.AirAttack;
         else
-            return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping or CharState.Falling or CharState.Attack or CharState.AirAttack;
+            return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping
+                or CharState.Falling or CharState.Attack or CharState.AirAttack;
     }
 
     ActionData GetAttackData(bool isMelee)
     {
-
         if (isMelee)
-            _currentAttackDataList = _footCollider.IsOnGround ? _currentWeapon.ActionAttackDatas : _currentWeapon.ActionAirAttackDatas;
+            _currentAttackDataList = _footCollider.IsOnGround
+                ? _currentWeapon.ActionAttackDatas
+                : _currentWeapon.ActionAirAttackDatas;
         else
-            _currentAttackDataList = _footCollider.IsOnGround ? _rangedWeapon.ActionAttackDatas : _rangedWeapon.ActionAirAttackDatas;
+            _currentAttackDataList = _footCollider.IsOnGround
+                ? _rangedWeapon.ActionAttackDatas
+                : _rangedWeapon.ActionAirAttackDatas;
 
         if (!_isAttacking)
             return _currentAttackDataList[0];
 
-        return _currentAttackDataList[_attackIndex];
+        var attackData = (_attackIndex < _currentAttackDataList.Length)
+            ? _currentAttackDataList[_attackIndex]
+            : _currentAttackDataList[0];
+
+        return attackData;
     }
 
     bool CheckComboConnection(ActionData nextAttackData)
@@ -93,7 +103,7 @@ public class Combat : MonoBehaviour
             return false;
 
         return CurrentFrame >= _currentActionData.ComboConnectionRange.x &&
-        CurrentFrame <= _currentActionData.ComboConnectionRange.y;
+               CurrentFrame <= _currentActionData.ComboConnectionRange.y;
     }
 
     void PerformAttack(ActionData actionData)
@@ -114,6 +124,7 @@ public class Combat : MonoBehaviour
     {
         CurrentFrame = frame;
     }
+
     private void OnEndAttack()
     {
         _isAttacking = false;
