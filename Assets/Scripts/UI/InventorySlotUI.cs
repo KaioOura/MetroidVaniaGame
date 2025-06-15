@@ -9,6 +9,8 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragHa
     public event Action<int> OnSlotClicked;
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI quantityText;
+    [SerializeField] private TooltipTrigger tooltipTrigger;
+    
     protected int _index;
 
     protected InventoryUIController _uiController;
@@ -16,6 +18,7 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragHa
     public void Initialize(InventoryUIController uiController)
     {
         _uiController = uiController;
+        tooltipTrigger.Initialize(uiController.ToolTipUiController);
     }
     
     public void SetIndex(int index)
@@ -29,12 +32,15 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragHa
         {
             icon.enabled = false;
             quantityText.text = "";
+            tooltipTrigger.SetTooltipContent("No info available");
         }
         else
         {
             icon.enabled = true;
             icon.sprite = itemSlot.Item.Data.ItemIcon;
             quantityText.text = itemSlot.Item.Data.IsStackable ? itemSlot.Quantity.ToString() : "";
+            
+            tooltipTrigger.SetTooltipContent($"Item: {itemSlot.Item.Data.ItemName} \n Left click to use");
         }
     }
     public virtual void OnPointerClick(PointerEventData eventData)

@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class InventoryUIController : MonoBehaviour
 {
+    public ToolTipUiController ToolTipUiController => _tooltipController;
     
-    [SerializeField] private InventorySlotUI slotUIPrefab;
-    [SerializeField] private Transform slotParent;
+    [SerializeField] protected InventorySlotUI slotUIPrefab;
+    [SerializeField] protected Transform slotParent;
 
-    private IInventoryService _inventory;
-    private List<InventorySlotUI> _slots = new();
+    protected IInventoryService _inventory;
+    protected List<InventorySlotUI> _slots = new();
     
-    public void Initialize(IInventoryService inventory)
+    protected ToolTipUiController _tooltipController;
+    
+    public virtual void Initialize(IInventoryService inventory, ToolTipUiController tooltipController)
     {
         _inventory = inventory;
-
+        
+        _tooltipController = tooltipController;
         _inventory.OnInventoryUpdated += RefreshUI;
 
         for (int i = 0; i < _inventory.ItemSlots.Count; i++)
@@ -29,7 +33,7 @@ public class InventoryUIController : MonoBehaviour
         RefreshUI();
     }
 
-    private void RefreshUI()
+    protected void RefreshUI()
     {
         for (int i = 0; i < _slots.Count; i++)
         {
@@ -37,10 +41,11 @@ public class InventoryUIController : MonoBehaviour
         }
     }
 
-    private void HandleSlotClick(int index)
+    protected void HandleSlotClick(int index)
     {
         _inventory.UseItem(index, gameObject);
         RefreshUI();
+        _tooltipController.HideTooltip();
     }
     
     public void SwapSlots(int fromIndex, int toIndex)

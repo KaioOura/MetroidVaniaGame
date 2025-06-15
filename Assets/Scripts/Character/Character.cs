@@ -190,17 +190,18 @@ public class Character : MonoBehaviour
 
     private void InitInventory()
     {
-        inventoryService.Initialize(21);
         _inventoryItemUseResolver = new InventoryItemUseResolver();
         _inventoryItemUseResolver.Initialize(combatInventoryService);
         inventoryService.OnItemUse += _inventoryItemUseResolver.HandleItemUsed;
+        inventoryService.Initialize(21);
         
-        combatInventoryService.Initialize(5);
         _combatItemUseResolver = new CombatItemUseResolver();
         _combatItemUseResolver.Initialize(inventoryService);
         combatInventoryService.OnItemUse += _combatItemUseResolver.HandleItemUsed;
         combatInventoryService.OnEquip += _combat.UpdateCurrentWeapon;
         combatInventoryService.OnUnEquip += _combat.UnEquipItem;
+        
+        combatInventoryService.Initialize(5);
     }
 
     public void ChangeCurrentState(CharState characterState)

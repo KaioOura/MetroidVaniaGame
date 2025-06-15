@@ -2,15 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Combat : MonoBehaviour
 {
-    [SerializeField] private WeaponData _rangedWeapon;
     [SerializeField] private FootCollider _footCollider;
     [SerializeField] private FrameActionManager _frameActionManager;
 
     private WeaponData _currentMelee;
-    
+    private WeaponData _currentRanged;
+
     private UpgradeManager _upgradeManager;
     private CharacterState _characterState;
     private int CurrentFrame;
@@ -34,16 +35,25 @@ public class Combat : MonoBehaviour
     public void UpdateCurrentWeapon(ItemData itemData)
     {
         WeaponData weaponData = itemData as WeaponData;
-        if (weaponData != null)
+
+        if (weaponData == null) return;
+
+        if (weaponData.WeaponType is WeaponType.Melee)
             _currentMelee = weaponData;
+        else
+            _currentRanged = weaponData;
     }
 
     public void UnEquipItem(ItemData itemData)
     {
         switch (itemData)
         {
-            case WeaponData:
-                _currentMelee = null;
+            case WeaponData weaponData:
+                if (weaponData.WeaponType is WeaponType.Melee)
+                    _currentMelee = null;
+                else
+                    _currentRanged = null;
+                
                 break;
         }
     }
@@ -83,11 +93,11 @@ public class Combat : MonoBehaviour
 
     bool CanAttack(bool isMelee)
     {
-        var weapon = isMelee ? _currentMelee : _rangedWeapon;
+        var weapon = isMelee ? _currentMelee : _currentRanged;
 
         if (weapon == null)
             return false;
-        
+
         if (isMelee)
             return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping
                 or CharState.Falling or CharState.Attack or CharState.AirAttack;
@@ -104,8 +114,8 @@ public class Combat : MonoBehaviour
                 : _currentMelee.ActionAirAttackDatas;
         else
             _currentAttackDataList = _footCollider.IsOnGround
-                ? _rangedWeapon.ActionAttackDatas
-                : _rangedWeapon.ActionAirAttackDatas;
+                ? _currentRanged.ActionAttackDatas
+                : _currentRanged.ActionAirAttackDatas;
 
         if (!_isAttacking)
             return _currentAttackDataList[0];

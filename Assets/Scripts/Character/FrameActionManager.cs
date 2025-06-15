@@ -83,7 +83,7 @@ public class FrameActionManager : MonoBehaviour
         float normalizedTransitionTime = 0;
         CurrentFrame = 0;
 
-        Debug.Log(CurrentFrame);
+        //Debug.Log(CurrentFrame);
 
         if (transitionDurantion > 0)
         {

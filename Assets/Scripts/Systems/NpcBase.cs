@@ -9,12 +9,13 @@ public class NpcBase : MonoBehaviour, IInteractable
     //This region, all it`s content and dependencies should be removed when dialogue system its done
     [SerializeField] private GameObject dialogueObj;
     [SerializeField] private TextMeshProUGUI textMeshProUGUI;
-
+    [SerializeField] private GameObject interactObj;
     #endregion
 
     public void Deselect()
     {
         //Do some visual changing
+        interactObj.SetActive(false);
         dialogueObj.gameObject.SetActive(false);
     }
 
@@ -36,6 +37,6 @@ public class NpcBase : MonoBehaviour, IInteractable
 
     public void Select()
     {
-        //Do some visual changing
+        interactObj.SetActive(true);
     }
 }

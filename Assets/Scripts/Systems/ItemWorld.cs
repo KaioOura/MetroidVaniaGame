@@ -1,10 +1,15 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ItemWorld : MonoBehaviour, IInteractable
 {
-    [SerializeField] private ItemData _itemData;
+    [FormerlySerializedAs("_itemData")] [SerializeField] private ItemData itemData;
     [SerializeField] private int quantity = 1;
+    #region Temporary region
+    [SerializeField] private GameObject interactObj;
+    #endregion
+    
     private SpriteRenderer spriteRenderer;
     
     private Item Item { get; set; }
@@ -16,8 +21,8 @@ public class ItemWorld : MonoBehaviour, IInteractable
 
     private void Start()
     {
-        Item = new Item(_itemData, quantity);
-        spriteRenderer.sprite = _itemData.ItemIcon;
+        Item = new Item(itemData, quantity);
+        spriteRenderer.sprite = itemData.ItemIcon;
     }
 
     public void OnInteract(Transform transform)
@@ -35,12 +40,12 @@ public class ItemWorld : MonoBehaviour, IInteractable
 
     public void Select()
     {
-        //throw new System.NotImplementedException();
+        interactObj.gameObject.SetActive(true);
     }
 
     public void Deselect()
     {
-        //throw new System.NotImplementedException();
+        interactObj.gameObject.SetActive(false);
     }
 
     public int GetPriority()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Systems.Inventory;
+using Systems.SaveLoad;
 using UnityEngine;
 
 public class InventoryService : MonoBehaviour, IInventoryService
@@ -61,12 +62,24 @@ public class InventoryService : MonoBehaviour, IInventoryService
             
             Item item = new Item(itemData, savedSlots[i].quantity);
 
-            _itemSlots[i].AddNewItem(item);
+            ForceItemAdd(item, _itemSlots[i]);
         }
         
         InventoryUpdate();
     }
 
+    protected virtual void ForceItemAdd(Item item, InventoryItemSlot slot)
+    {
+        if (item.Data.IsStackable)
+        {
+            TryAddItem(item, item.Quantity);
+        }
+        else
+        {
+            slot.AddNewItem(item);
+        }
+    }
+    
     public virtual bool TryAddItem(Item item, int quantity)
     {
         // Stack first
@@ -75,7 +88,9 @@ public class InventoryService : MonoBehaviour, IInventoryService
             for (int i = 0; i < _itemSlots.Count; i++)
             {
                 var itemTemp = _itemSlots[i];
-                if (itemTemp != null && itemTemp.Item == item && itemTemp.Quantity < item.Data.MaxStack)
+                if (itemTemp?.Item == null) continue;
+                
+                if (itemTemp.Item.Data == item.Data && itemTemp.Quantity < item.Data.MaxStack)
                 {
                     itemTemp.AddQuantity(quantity);
                     InventoryUpdate();

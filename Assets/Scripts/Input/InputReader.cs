@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Systems;
+using Systems.SaveLoad;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,50 +16,64 @@ public class InputReader : MonoBehaviour
     public Action<bool> OnDashInput;
     public Action<bool> OnInteractInput;
 
-    void Awake()
+    public Action<bool> OnInventoryInput;
+
+
+    Vector2 GetInputValue(Vector2 value) => GameManager.Instance.IsGameplay ? value : Vector2.zero;
+    float GetInputValue(float value) => GameManager.Instance.IsGameplay ? value : 0;
+    
+    
+    public void HandleStateChanged(GameState state)
     {
+        if (state is GameState.Gameplay) return;
+        OnMoveInput?.Invoke(GetInputValue(Vector2.zero));
+        OnJumpInput?.Invoke(false);
+        OnAttackInput?.Invoke(false);
 
     }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    
     public void OnMove(InputValue ctx)
     {
-        OnMoveInput?.Invoke(ctx.Get<Vector2>());
+        OnMoveInput?.Invoke(GetInputValue(ctx.Get<Vector2>()));
     }
 
     public void OnJump(InputValue ctx)
     {
-        OnJumpInput?.Invoke(ctx.Get<float>() == 1);
+        OnJumpInput?.Invoke(GetInputValue(ctx.Get<float>())  == 1);
     }
 
     public void OnAttack(InputValue ctx)
     {
-        OnAttackInput?.Invoke(ctx.Get<float>() == 1);
+        OnAttackInput?.Invoke(Mathf.Approximately(GetInputValue(ctx.Get<float>()), 1));
     }
 
     public void OnRangedAttack(InputValue ctx)
     {
-        OnRangedAttackInput?.Invoke(ctx.Get<float>() == 1);
+        OnRangedAttackInput?.Invoke(Mathf.Approximately(GetInputValue(ctx.Get<float>()), 1));
     }
 
     public void OnDash(InputValue ctx)
     {
-        OnDashInput?.Invoke(ctx.Get<float>() == 1);
+        OnDashInput?.Invoke(Mathf.Approximately(GetInputValue(ctx.Get<float>()), 1));
     }
 
     public void OnInteract(InputValue ctx)
     {
-        OnInteractInput?.Invoke(ctx.Get<float>() == 1);
+        OnInteractInput?.Invoke(Mathf.Approximately(GetInputValue(ctx.Get<float>()), 1));
+    }
+
+    public void OnInventory(InputValue ctx)
+    {
+        OnInventoryInput?.Invoke(Mathf.Approximately(GetInputValue(ctx.Get<float>()), 1));
+    }
+
+    public void OnSave(InputValue ctx)
+    {
+        SaveManager.SaveAll();
+    }
+
+    public void OnClear(InputValue ctx)
+    {
+        SaveManager.ClearSave();
     }
 }

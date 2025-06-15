@@ -10,7 +10,8 @@ public class CombatInventoryService : InventoryService
     private InventoryItemSlot _chestSlot;
     private InventoryItemSlot _bottomSlot;
     private InventoryItemSlot _bootsSlot;
-    private InventoryItemSlot _weaponSlot;
+    private InventoryItemSlot _meleeWeaponSlot;
+    private InventoryItemSlot _rangedWeaponSlot;
 
     public virtual void Initialize(int capacity)
     {
@@ -25,14 +26,19 @@ public class CombatInventoryService : InventoryService
 
         _bootsSlot = new InventoryItemSlot();
         _bootsSlot.SetSlotType(ItemType.Equippable);
-        _weaponSlot = new InventoryItemSlot();
-        _weaponSlot.SetSlotType(ItemType.Equippable);
+        
+        _meleeWeaponSlot = new InventoryItemSlot();
+        _meleeWeaponSlot.SetSlotType(ItemType.Equippable);
+        
+        _rangedWeaponSlot = new InventoryItemSlot();
+        _rangedWeaponSlot.SetSlotType(ItemType.Equippable);
 
         _itemSlots.Add(_headSlot);
         _itemSlots.Add(_chestSlot);
         _itemSlots.Add(_bottomSlot);
         _itemSlots.Add(_bootsSlot);
-        _itemSlots.Add(_weaponSlot);
+        _itemSlots.Add(_meleeWeaponSlot);
+        _itemSlots.Add(_rangedWeaponSlot);
         
         LoadItems();
     }
@@ -44,6 +50,12 @@ public class CombatInventoryService : InventoryService
         return HandleItemSlotAllocation(item);
     }
 
+    protected override void ForceItemAdd(Item item, InventoryItemSlot slot)
+    {
+        base.ForceItemAdd(item, slot);
+        OnEquip?.Invoke(item.Data);
+    }
+
     private bool HandleItemSlotAllocation(Item item)
     {
         InventoryItemSlot slot = null;
@@ -51,9 +63,9 @@ public class CombatInventoryService : InventoryService
 
         switch (item.Data)
         {
-            case WeaponData:
+            case WeaponData weaponData:
             {
-                slot = _weaponSlot;
+                slot = weaponData.WeaponType is WeaponType.Melee ? _meleeWeaponSlot : _rangedWeaponSlot;
                 break;
             }
             case ArmorData:

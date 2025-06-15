@@ -3,8 +3,6 @@ using UnityEngine.EventSystems;
 
 public class CombatSlotUI : InventorySlotUI
 {
-    [SerializeField] private ItemType itemType;
-    
     // public override void OnDrop(PointerEventData eventData)
     // {
     //     int fromIndex = InventoryDragHandler.Instance.DraggingIndex;

@@ -13,4 +13,15 @@ MonoBehaviour:
   m_Name: NPC_1
   m_EditorClassIdentifier: 
   npcName: William
-  dialogueText: Hey adventurer
+  dialogueText: 'Hey adventurer! I see that you just took this sword. Go collect
+    the other equipments!
+
+    Use I to open the inventory.
+
+    Use O to save and
+    P to clear data.
+
+    Use WASD, Space and Shift to move.
+
+    Use Right/Left
+    click to attack'

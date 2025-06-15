@@ -2,55 +2,24 @@ using System.Collections.Generic;
 using Systems.Inventory;
 using UnityEngine;
 
-public class CombatUIController : MonoBehaviour
+public class CombatUIController : InventoryUIController
 {
-    public static CombatUIController Instance { get; private set; }
-    
-    [SerializeField] private InventorySlotUI slotUIPrefab;
-    [SerializeField] private Transform slotParent;
-
-    private IInventoryService _inventory;
-    private List<InventorySlotUI> _slots = new();
-
-    private void Awake()
-    {
-        Instance = this;
-    }
-    
-    public void Initialize(IInventoryService inventory)
+    public override void Initialize(IInventoryService inventory, ToolTipUiController tooltipController)
     {
         _inventory = inventory;
-
+        _tooltipController = tooltipController;
         _inventory.OnInventoryUpdated += RefreshUI;
 
-        for (int i = 0; i < _inventory.ItemSlots.Count; i++)
+        var slotsUIs = slotParent.GetComponentsInChildren<CombatSlotUI>();
+
+        for (int i = 0; i < slotsUIs.Length; i++)
         {
-            InventorySlotUI slotObj = Instantiate(slotUIPrefab, slotParent);
-            slotObj.SetIndex(i);
-            slotObj.OnSlotClicked += HandleSlotClick;
-            _slots.Add(slotObj);
+            slotsUIs[i].SetIndex(i);
+            slotsUIs[i].Initialize(this);
+            slotsUIs[i].OnSlotClicked += HandleSlotClick;
+            _slots.Add(slotsUIs[i]);
         }
 
-        RefreshUI();
-    }
-
-    private void RefreshUI()
-    {
-        for (int i = 0; i < _slots.Count; i++)
-        {
-            _slots[i].Render(_inventory.ItemSlots[i]);
-        }
-    }
-
-    private void HandleSlotClick(int index)
-    {
-        _inventory.UseItem(index, gameObject);
-        RefreshUI();
-    }
-    
-    public void SwapSlots(int fromIndex, int toIndex)
-    {
-        _inventory.MoveItem(fromIndex, toIndex);
         RefreshUI();
     }
 }

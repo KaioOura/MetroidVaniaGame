@@ -162,6 +162,7 @@ GameObject:
   - component: {fileID: 1550924132142893023}
   - component: {fileID: 3714434595694103222}
   - component: {fileID: 5968931654496433327}
+  - component: {fileID: 6885119883657666629}
   m_Layer: 5
   m_Name: Combat_Slot_UI
   m_TagString: Untagged
@@ -243,7 +244,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 8196172509698421598}
   quantityText: {fileID: 5242551918120139534}
-  itemType: 0
+  tooltipTrigger: {fileID: 6885119883657666629}
+--- !u!114 &6885119883657666629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185532290499087364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 347f44e12ee5a0e45be381d69db13265, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipContent: 
 --- !u!1 &3433618975355185084
 GameObject:
   m_ObjectHideFlags: 0

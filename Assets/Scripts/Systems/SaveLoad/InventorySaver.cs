@@ -42,10 +42,7 @@ public class InventorySaver
             stream.Close();
             return slotDatas;
         }
-        else
-        {
-            Debug.LogError("Save File not found in" + path);
-            return null;
-        }
+
+        return null;
     }
 }
