@@ -21,8 +21,6 @@ public class InventoryItemUseResolver
                 return false;
             case EquipItemData:
                 return TryEquip(item);
-            default:
-                throw new ArgumentOutOfRangeException();
         }
 
         return false;
