@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class Combat : MonoBehaviour
 {
-    [SerializeField] private WeaponData _currentWeapon;
     [SerializeField] private WeaponData _rangedWeapon;
     [SerializeField] private FootCollider _footCollider;
     [SerializeField] private FrameActionManager _frameActionManager;
 
+    private WeaponData _currentMelee;
+    
     private UpgradeManager _upgradeManager;
     private CharacterState _characterState;
     private int CurrentFrame;
@@ -28,6 +29,23 @@ public class Combat : MonoBehaviour
     {
         _upgradeManager = upgradeManager;
         _characterState = characterState;
+    }
+
+    public void UpdateCurrentWeapon(ItemData itemData)
+    {
+        WeaponData weaponData = itemData as WeaponData;
+        if (weaponData != null)
+            _currentMelee = weaponData;
+    }
+
+    public void UnEquipItem(ItemData itemData)
+    {
+        switch (itemData)
+        {
+            case WeaponData:
+                _currentMelee = null;
+                break;
+        }
     }
 
     public void OnAttackInput(bool pressing)
@@ -65,6 +83,11 @@ public class Combat : MonoBehaviour
 
     bool CanAttack(bool isMelee)
     {
+        var weapon = isMelee ? _currentMelee : _rangedWeapon;
+
+        if (weapon == null)
+            return false;
+        
         if (isMelee)
             return _characterState.CharState is CharState.Free or CharState.Jumping or CharState.DoubleJumping
                 or CharState.Falling or CharState.Attack or CharState.AirAttack;
@@ -77,8 +100,8 @@ public class Combat : MonoBehaviour
     {
         if (isMelee)
             _currentAttackDataList = _footCollider.IsOnGround
-                ? _currentWeapon.ActionAttackDatas
-                : _currentWeapon.ActionAirAttackDatas;
+                ? _currentMelee.ActionAttackDatas
+                : _currentMelee.ActionAirAttackDatas;
         else
             _currentAttackDataList = _footCollider.IsOnGround
                 ? _rangedWeapon.ActionAttackDatas

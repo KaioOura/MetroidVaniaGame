@@ -33,15 +33,7 @@ public class InventoryItemUseResolver
         EquipItemData equipItemData = item.Data as EquipItemData;
         
         if (equipItemData == null) return false;
-
-        switch (equipItemData)
-        {
-            case WeaponData:
-                return _combatInventory.TryAddItem(item, item.Quantity);
-            case ArmorData:
-                break;
-        }
-
-        return false;
+        
+        return _combatInventory.TryAddItem(item, item.Quantity);
     }
 }

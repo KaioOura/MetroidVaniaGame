@@ -3,39 +3,107 @@ using UnityEngine;
 
 public class CombatInventoryService : InventoryService
 {
+    public event Action<ItemData> OnEquip;
+    public event Action<ItemData> OnUnEquip;
     
+    private InventoryItemSlot _headSlot;
+    private InventoryItemSlot _chestSlot;
+    private InventoryItemSlot _bottomSlot;
+    private InventoryItemSlot _bootsSlot;
+    private InventoryItemSlot _weaponSlot;
+
     public virtual void Initialize(int capacity)
     {
-        var headSlot = new InventoryItemSlot();
-        headSlot.SetSlotType(ItemType.Equippable);
-        var chestSlot = new InventoryItemSlot();
-        chestSlot.SetSlotType(ItemType.Equippable);
-        var bottomSlot = new InventoryItemSlot();
-        bottomSlot.SetSlotType(ItemType.Equippable);
-        var bootsSlot = new InventoryItemSlot();
-        bootsSlot.SetSlotType(ItemType.Equippable);
-        var weaponSlot = new InventoryItemSlot();
-        weaponSlot.SetSlotType(ItemType.Equippable);
+        _headSlot = new InventoryItemSlot();
+        _headSlot.SetSlotType(ItemType.Equippable);
+
+        _chestSlot = new InventoryItemSlot();
+        _chestSlot.SetSlotType(ItemType.Equippable);
+
+        _bottomSlot = new InventoryItemSlot();
+        _bottomSlot.SetSlotType(ItemType.Equippable);
+
+        _bootsSlot = new InventoryItemSlot();
+        _bootsSlot.SetSlotType(ItemType.Equippable);
+        _weaponSlot = new InventoryItemSlot();
+        _weaponSlot.SetSlotType(ItemType.Equippable);
+
+        _itemSlots.Add(_headSlot);
+        _itemSlots.Add(_chestSlot);
+        _itemSlots.Add(_bottomSlot);
+        _itemSlots.Add(_bootsSlot);
+        _itemSlots.Add(_weaponSlot);
         
-        _itemSlots.Add(headSlot);
-        _itemSlots.Add(chestSlot);
-        _itemSlots.Add(bottomSlot);
-        _itemSlots.Add(bootsSlot);
-        _itemSlots.Add(weaponSlot);
+        LoadItems();
     }
 
     public override bool TryAddItem(Item item, int quantity)
     {
-        for (int i = 0; i < _itemSlots.Count; i++)
+        if (item.Data.ItemType is not ItemType.Equippable) return false;
+
+        return HandleItemSlotAllocation(item);
+    }
+
+    private bool HandleItemSlotAllocation(Item item)
+    {
+        InventoryItemSlot slot = null;
+        bool success = false;
+
+        switch (item.Data)
         {
-            if (_itemSlots[i].Item == null && _itemSlots[i].SlotType == item.Data.ItemType)
+            case WeaponData:
             {
-                _itemSlots[i].AddNewItem(item);
-                InventoryUpdate();;
-                return true;
+                slot = _weaponSlot;
+                break;
             }
+            case ArmorData:
+                HandleArmorSlotAllocation(item, out slot);
+                break;
         }
 
-        return false;
+        if (slot.Item == null)
+        {
+            slot.AddNewItem(item);
+            OnEquip?.Invoke(item.Data);
+            success = true;
+        }
+
+        InventoryUpdate();
+        return success;
+    }
+
+    private void HandleArmorSlotAllocation(Item item, out InventoryItemSlot slot)
+    {
+        ArmorData armorData = item.Data as ArmorData;
+        slot = null;
+        
+        switch (armorData.ArmorType)
+        {
+            case ArmorType.Head:
+                slot = _headSlot;
+                break;
+            case ArmorType.Chest:
+                slot = _chestSlot;
+                break;
+            case ArmorType.Bottom:
+                slot = _bottomSlot;
+                break;
+            case ArmorType.Boots:
+                slot = _bootsSlot;
+                break;
+        }
+    }
+
+    public override void RemoveItemAt(int index, int quantity)
+    {
+        if (index < 0 || index >= _itemSlots.Count || _itemSlots[index] == null) return;
+
+        _itemSlots[index].RemoveQuantity(quantity);
+        if (_itemSlots[index].IsEmpty)
+        {
+            OnUnEquip?.Invoke(_itemSlots[index].Item.Data);
+            _itemSlots[index].RemoveItem();
+        }
+
     }
 }

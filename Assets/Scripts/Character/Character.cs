@@ -83,6 +83,10 @@ public class Character : MonoBehaviour
         _inputReader.OnInteractInput -= _interactor.TryInteract;
 
         inventoryService.OnItemUse -= _inventoryItemUseResolver.HandleItemUsed;
+        
+        combatInventoryService.OnItemUse -= _combatItemUseResolver.HandleItemUsed;
+        combatInventoryService.OnEquip -= _combat.UpdateCurrentWeapon;
+        combatInventoryService.OnUnEquip -= _combat.UnEquipItem;
     }
 
     void InitInput()
@@ -195,6 +199,8 @@ public class Character : MonoBehaviour
         _combatItemUseResolver = new CombatItemUseResolver();
         _combatItemUseResolver.Initialize(inventoryService);
         combatInventoryService.OnItemUse += _combatItemUseResolver.HandleItemUsed;
+        combatInventoryService.OnEquip += _combat.UpdateCurrentWeapon;
+        combatInventoryService.OnUnEquip += _combat.UnEquipItem;
     }
 
     public void ChangeCurrentState(CharState characterState)

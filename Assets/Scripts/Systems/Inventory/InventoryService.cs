@@ -1,28 +1,37 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Systems.Inventory;
 using UnityEngine;
 
 public class InventoryService : MonoBehaviour, IInventoryService
 {
     public event Action OnInventoryUpdated;
-    
     public List<InventoryItemSlot> ItemSlots => _itemSlots;
-    
-    protected List<InventoryItemSlot> _itemSlots = new List<InventoryItemSlot>();
 
+    [SerializeField] private ItemDataBase _itemDataBase;
+    protected List<InventoryItemSlot> _itemSlots = new List<InventoryItemSlot>();
     private int _capacity = 5;
 
+    bool _isCombatInventory;
+    
     public event Func<Item, bool> OnItemUse;
-
-    [ContextMenu("Show Inventory")]
-    public void GetItemsList()
+    
+    [ContextMenu("Load Inventory")]
+    public void LoadItemsList()
     {
+        LoadItems();
+        
         foreach (var itemSlot in _itemSlots)
         {
             if (itemSlot.Item == null) continue;
             print(itemSlot.Item.Data.ItemName);
         }
+    }
+
+    protected void Awake()
+    {
+        _isCombatInventory = this is CombatInventoryService;
     }
 
     public virtual void Initialize(int capacity)
@@ -32,8 +41,31 @@ public class InventoryService : MonoBehaviour, IInventoryService
         {
             _itemSlots.Add(new InventoryItemSlot());
         }
+
+        LoadItems();
     }
-    
+
+    protected void LoadItems()
+    {
+        var savedSlots = SaveManager.LoadInventory(isCombatInventory: _isCombatInventory);
+
+        if (savedSlots == null || savedSlots.Count <=0) return;
+        
+        for (int i = 0; i < _itemSlots.Count; i++)
+        {
+            if (savedSlots[i].itemDataName == "") continue;
+            
+            ItemData itemData = _itemDataBase.ItemsDatas.FirstOrDefault(id => id.ItemName == savedSlots[i].itemDataName);
+            
+            if (itemData == null) continue;
+            
+            Item item = new Item(itemData, savedSlots[i].quantity);
+
+            _itemSlots[i].AddNewItem(item);
+        }
+        
+        InventoryUpdate();
+    }
 
     public virtual bool TryAddItem(Item item, int quantity)
     {
@@ -65,7 +97,7 @@ public class InventoryService : MonoBehaviour, IInventoryService
 
         return false;
     }
-    
+
     public virtual void RemoveItemAt(int index, int quantity)
     {
         if (index < 0 || index >= _itemSlots.Count || _itemSlots[index] == null) return;
@@ -87,21 +119,20 @@ public class InventoryService : MonoBehaviour, IInventoryService
         _itemSlots[toIndex] = from;
     }
 
-    public void UseItem(int index, GameObject user)
+    public virtual void UseItem(int index, GameObject user)
     {
         if (!IsValidIndex(index)) return;
-        
+
         bool usedSuccessfully = OnItemUse?.Invoke(_itemSlots[index].Item) ?? false;
-        
+
         if (usedSuccessfully)
             RemoveItemAt(index, 1);
     }
 
-    private bool IsValidIndex(int index) => index >= 0 && index < _itemSlots.Count;
+    protected bool IsValidIndex(int index) => index >= 0 && index < _itemSlots.Count;
 
     public void InventoryUpdate()
     {
         OnInventoryUpdated?.Invoke();
     }
 }
-
