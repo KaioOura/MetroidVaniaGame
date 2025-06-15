@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -29,43 +27,43 @@ public class FrameActionHitBox : FrameAction
 }
 
 
-public class ArrayElementSelector : MonoBehaviour
-{
-    public AttackData attackData;
-}
-
-[CustomEditor(typeof(ArrayElementSelector))]
-public class ArrayElementSelectorEditor : Editor
-{
-    private int selectedIndex = -1;
-
-    public override void OnInspectorGUI()
-    {
-        ArrayElementSelector script = (ArrayElementSelector)target;
-
-        for (int i = 0; i < script.attackData.FrameActionHitboxes.Length; i++)
-        {
-            EditorGUILayout.BeginHorizontal();
-
-            if (GUILayout.Button($"Element {i}", GUILayout.Width(100)))
-            {
-                selectedIndex = i;
-                Debug.Log($"Selected element index: {i}, value: {script.attackData.FrameActionHitboxes[i]}");
-            }
-
-            //script.attackData.FrameActionHitboxes[i] = EditorGUILayout.IntField(script.attackData.FrameActionHitboxes[i]);
-
-            EditorGUILayout.EndHorizontal();
-        }
-
-        if (selectedIndex != -1)
-        {
-            EditorGUILayout.HelpBox($"Selected element index: {selectedIndex}, value: {script.attackData.FrameActionHitboxes[selectedIndex]}", MessageType.Info);
-        }
-
-        if (GUI.changed)
-        {
-            EditorUtility.SetDirty(script);
-        }
-    }
-}
+// public class ArrayElementSelector : MonoBehaviour
+// {
+//     public AttackData attackData;
+// }
+//
+// [CustomEditor(typeof(ArrayElementSelector))]
+// public class ArrayElementSelectorEditor : Editor
+// {
+//     private int selectedIndex = -1;
+//
+//     public override void OnInspectorGUI()
+//     {
+//         ArrayElementSelector script = (ArrayElementSelector)target;
+//
+//         for (int i = 0; i < script.attackData.FrameActionHitboxes.Length; i++)
+//         {
+//             EditorGUILayout.BeginHorizontal();
+//
+//             if (GUILayout.Button($"Element {i}", GUILayout.Width(100)))
+//             {
+//                 selectedIndex = i;
+//                 Debug.Log($"Selected element index: {i}, value: {script.attackData.FrameActionHitboxes[i]}");
+//             }
+//
+//             //script.attackData.FrameActionHitboxes[i] = EditorGUILayout.IntField(script.attackData.FrameActionHitboxes[i]);
+//
+//             EditorGUILayout.EndHorizontal();
+//         }
+//
+//         if (selectedIndex != -1)
+//         {
+//             EditorGUILayout.HelpBox($"Selected element index: {selectedIndex}, value: {script.attackData.FrameActionHitboxes[selectedIndex]}", MessageType.Info);
+//         }
+//
+//         if (GUI.changed)
+//         {
+//             EditorUtility.SetDirty(script);
+//         }
+//      }
+// }

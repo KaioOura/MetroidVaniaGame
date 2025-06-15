@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e52fe829a4eba7c43a0fa0acf331d1ff, type: 3}
   m_Name: RangedAttackData
   m_EditorClassIdentifier: 
-  _animationClip: {fileID: 7400000, guid: 6db959969bb969748af33186bf7cde8a, type: 2}
+  _animationClip: {fileID: 7400000, guid: 79260b4ac2c00b3459d1191a4c6fbcb3, type: 2}
   _comboConnectionRange: {x: 30, y: 35}
   _transitionDuration: 0.1
   _animationState: 1
@@ -30,4 +30,4 @@ MonoBehaviour:
     _force: {x: -0.6, y: 0}
   _frameActionVFXs: []
   _shotFrame:
-    ActionInterval: {x: 27, y: 27}
+    ActionInterval: {x: 8, y: 8}

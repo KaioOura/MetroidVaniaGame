@@ -24,7 +24,7 @@ public class BowQuiver : MonoBehaviour
     public void OnShootArrowRequested()
     {
         //Prefab, speed, arrow, instatiate
-        Arrow arrow = Instantiate(_currentArrowData.ArrowPrefab, _shotPos.position, Quaternion.identity);
+        Arrow arrow = Instantiate(_currentArrowData.ArrowPrefab, _shotPos.position, transform.parent.rotation);
         arrow.InitArrow(_currentArrowData, _arrowSpeed);
         //Debug.Log("Arrow SHOT");
     }

@@ -11,7 +11,8 @@ public class Arrow : MonoBehaviour
     public void InitArrow(ArrowData arrowData, float speed)
     {
         _damageInfos = arrowData.DamageInfos;
-        _rb.AddForceX(speed, ForceMode2D.Impulse);
+        
+        _rb.AddForceX(speed * transform.right.x, ForceMode2D.Impulse);
     }
 
     void OnTriggerEnter2D (Collider2D other)
